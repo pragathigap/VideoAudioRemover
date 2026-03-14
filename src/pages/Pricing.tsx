@@ -10,10 +10,11 @@ interface PricingCardProps {
   buttonText: string;
   badge?: string;
   recommended?: boolean;
+  originalPrice?: string;
 }
 
-const PricingCard = ({ title, price, period, features, buttonText, badge, recommended }: PricingCardProps) => (
-  <motion.div 
+const PricingCard = ({ title, price, period, features, buttonText, badge, recommended, originalPrice }: PricingCardProps) => (
+  <motion.div
     whileHover={{ y: -10, scale: 1.015 }}
     initial={{ opacity: 0, y: 18 }}
     animate={{ opacity: 1, y: 0 }}
@@ -32,6 +33,9 @@ const PricingCard = ({ title, price, period, features, buttonText, badge, recomm
       <div className="pricing-top">
         <h3 className={`pricing-eyebrow ${recommended ? 'pricing-eyebrow--recommended' : ''}`}>{title}</h3>
         <div className="pricing-price-row">
+          {originalPrice && (
+            <span className="pricing-original-price">${originalPrice}</span>
+          )}
           <span className="pricing-dollar">$</span>
           <span className="pricing-price gradient-text">{price}</span>
         </div>
@@ -87,8 +91,8 @@ const Pricing: React.FC = () => {
               Upgrade your workflow
             </span>
           </motion.div>
-          
-          <motion.h1 
+
+          <motion.h1
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="pricing-title"
@@ -101,38 +105,40 @@ const Pricing: React.FC = () => {
         </header>
 
         <div className="pricing-grid">
-          <PricingCard 
+          <PricingCard
             title="Monthly"
             price="1.99"
-            period="Automatic monthly billing"
+            period="Billed Monthly"
             buttonText="Start Monthly Pro"
             features={[
               "No Advertisements",
-              "10x Batch Video Processing",
-              "Unlimited Audio Extraction",
-              "Instant Core Engine Load",
-              "Private Local Processing"
+              "Unlimited Remove Audio",
+              "Add Audio to Video – 20 Uses",
+              "Unlimited Extract Audio",
+              "Unlimited Video Compression",
+              "Unlimited Video Resizing"
             ]}
           />
-          <PricingCard 
+          <PricingCard
             title="Annual"
             price="14.99"
+            originalPrice="22.8"
             period="Billed yearly • Save 37%"
             badge="Best Value"
             recommended={true}
             buttonText="Unlock Annual Elite"
             features={[
               "No Advertisements",
-              "10x Batch Video Processing",
-              "Unlimited Audio Extraction",
-              "Instant Core Engine Load",
-              "Commercial Use License",
-              "Priority Feature Access"
+              "Unlimited Remove Audio",
+              "Unlimited Add Audio",
+              "Unlimited Extract Audio",
+              "Unlimited Video Compression",
+              "Unlimited Video Resizing"
             ]}
           />
         </div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}

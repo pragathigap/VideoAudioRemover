@@ -1,11 +1,21 @@
 import React from 'react';
 import { Video as VideoIcon } from 'lucide-react';
 
-const Footer: React.FC = () => {
+interface FooterProps {
+  onNavigate?: (page: string) => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
+  const navigate = (page: string) => {
+    if (onNavigate) {
+      onNavigate(page);
+    }
+  };
+
   return (
     <footer className="footer">
       <div className="footer-grid">
-        <div>
+        <div className="cursor-pointer" onClick={() => navigate('remove-audio')}>
           <div className="flex items-center gap-2 mb-6">
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-cyan-400 rounded-lg flex items-center justify-center">
               <VideoIcon className="text-white" size={18} />
@@ -18,23 +28,23 @@ const Footer: React.FC = () => {
         </div>
         <div>
           <h5 className="footer-title">Tools</h5>
-          <a href="#" className="footer-link">Remove Audio</a>
-          <a href="#" className="footer-link">Extract MP3</a>
-          <a href="#" className="footer-link">Compress MP3</a>
-          <a href="#" className="footer-link">Pricing</a>
+          <button onClick={() => navigate('remove-audio')} className="footer-link-btn">Remove Audio</button>
+          <button onClick={() => navigate('extract-audio')} className="footer-link-btn">Extract Audio</button>
+          <button onClick={() => navigate('compress-video')} className="footer-link-btn">Compress Video</button>
+          <button onClick={() => navigate('add-audio')} className="footer-link-btn">Add Audio</button>
+          <button onClick={() => navigate('resizer')} className="footer-link-btn">Resize Video</button>
         </div>
         <div>
           <h5 className="footer-title">Support</h5>
-          <a href="#" className="footer-link">FAQ</a>
-          <a href="#" className="footer-link">Contact</a>
-          <a href="#" className="footer-link">Privacy</a>
-          <a href="#" className="footer-link">Terms</a>
+          <button onClick={() => navigate('info:faq')} className="footer-link-btn">FAQ</button>
+          <button onClick={() => navigate('contact')} className="footer-link-btn">Contact</button>
+          <button onClick={() => navigate('privacy')} className="footer-link-btn">Privacy</button>
+          <button onClick={() => navigate('terms')} className="footer-link-btn">Terms</button>
         </div>
         <div>
           <h5 className="footer-title">Legal</h5>
-          <a href="#" className="footer-link">Privacy Policy</a>
-          <a href="#" className="footer-link">Terms of Service</a>
-          <a href="#" className="footer-link">Cookie Policy</a>
+          <button onClick={() => navigate('privacy')} className="footer-link-btn">Privacy Policy</button>
+          <button onClick={() => navigate('terms')} className="footer-link-btn">Terms of Service</button>
         </div>
       </div>
       <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-glass-border text-center text-xs text-text-muted">
