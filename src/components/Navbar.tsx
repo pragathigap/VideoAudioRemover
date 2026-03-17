@@ -32,7 +32,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
         <div className="brand-badge w-10 h-10 rounded-xl flex items-center justify-center">
           <VideoIcon className="text-white" size={24} />
         </div>
-        <span className="text-xl font-bold gradient-text">VidAudio Remover</span>
+        <span className="text-xl font-bold gradient-text">Remove Audio from Video</span>
       </div>
 
       <div className="flex gap-2 items-center justify-center">
@@ -83,9 +83,9 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
       <div className="flex justify-end flex-1">
         <div className="flex items-center gap-3">
           {user ? (
-            <button 
-              type="button" 
-              className="btn-primary py-2 px-6" 
+            <button
+              type="button"
+              className="btn-primary py-2 px-6"
               onClick={() => navigate('dashboard')}
             >
               Dashboard
