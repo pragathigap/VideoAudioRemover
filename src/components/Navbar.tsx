@@ -1,12 +1,14 @@
 import React, { useMemo, useRef } from 'react';
 import { Video as VideoIcon } from 'lucide-react';
+import type { User } from '@supabase/supabase-js';
 
 interface NavbarProps {
   onNavigate: (page: string) => void;
   currentPage: string;
+  user?: User | null;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
+const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
   const navRef = useRef<HTMLElement | null>(null);
 
   const active = useMemo(() => {
@@ -79,10 +81,25 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
       </div>
 
       <div className="flex justify-end flex-1">
-        <div className="flex items-center gap-2">
-          <button type="button" className="btn-secondary py-2 px-6" onClick={() => navigate('login')}>
-            Log In
-          </button>
+        <div className="flex items-center gap-3">
+          {user ? (
+            <button 
+              type="button" 
+              className="btn-primary py-2 px-6" 
+              onClick={() => navigate('dashboard')}
+            >
+              Dashboard
+            </button>
+          ) : (
+            <>
+              <button type="button" className="btn-secondary py-2 px-6" onClick={() => navigate('login')}>
+                Log In
+              </button>
+              <button type="button" className="btn-primary py-2 px-6" onClick={() => navigate('signup')}>
+                Sign Up
+              </button>
+            </>
+          )}
         </div>
       </div>
     </nav>

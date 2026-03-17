@@ -1,8 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Download, CheckCircle2, VolumeX, FileAudio, RefreshCw, X } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Upload, Download, CheckCircle2, VolumeX, FileAudio, RefreshCw, X, Crown, Zap, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { muteVideo, extractAudio, compressVideo, resizeVideo, addAudioToVideo } from '../mediaProcessor';
+import { supabase } from '../lib/supabase';
+import type { Session, User } from '@supabase/supabase-js';
 
 export type ToolMode = 'all' | 'mute' | 'extract' | 'compress-video' | 'resize-video' | 'add-audio';
 
@@ -31,15 +33,137 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const audioInputRef = useRef<HTMLInputElement>(null);
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
+  const limitModalAnimationFrameRef = useRef<number | null>(null);
 
   // Settings for new tools
   const [compressionCrf, setCompressionCrf] = useState(28); // 18-28 is good range
-  const [resizeRes, setResizeRes] = useState<{ w: number, h: number }>({ w: 1280, h: 720 });
   const [selectedFrame, setSelectedFrame] = useState('16:9');
   const [selectedQuality, setSelectedQuality] = useState('720');
 
+  const FREE_DAILY_LIMIT = 3;
+  const FREE_FILE_SIZE_LIMIT = 50 * 1024 * 1024; // 50MB
+  const PAID_FILE_SIZE_LIMIT = 500 * 1024 * 1024; // 500MB
+  const FREE_DURATION_LIMIT = 120; // 2 minutes
+
+  const getCurrentDate = () => new Date().toISOString().slice(0, 10);
+
+  const getInitialUsageCount = () => {
+    const currentDate = getCurrentDate();
+    const stored = localStorage.getItem('vid_usage_tracker_v2');
+    if (!stored) {
+      localStorage.setItem('vid_usage_tracker_v2', JSON.stringify({ date: currentDate, count: 0 }));
+      return 0;
+    }
+
+    try {
+      const parsed: any = JSON.parse(stored);
+      if (parsed && parsed.date === currentDate) {
+        return parsed.count || 0;
+      }
+    } catch (e) {
+      void e;
+    }
+
+    localStorage.setItem('vid_usage_tracker_v2', JSON.stringify({ date: currentDate, count: 0 }));
+    return 0;
+  };
+
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isPremium, setIsPremium] = useState(false);
+  const [usageCount, setUsageCount] = useState<number>(() => getInitialUsageCount());
+  const [showLimitModal, setShowLimitModal] = useState(false);
+
   useEffect(() => {
-    const q = parseInt(selectedQuality);
+    setUsageCount(getInitialUsageCount());
+  }, [mode]);
+
+  useEffect(() => {
+    return () => {
+      if (limitModalAnimationFrameRef.current !== null) {
+        window.cancelAnimationFrame(limitModalAnimationFrameRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const applyUser = (user: User | null) => {
+      setCurrentUser(user);
+      setIsPremium(!!user?.user_metadata?.is_premium);
+    };
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!isMounted) return;
+      applyUser(user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session: Session | null) => {
+      void event;
+      if (!isMounted) return;
+      applyUser(session?.user ?? null);
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const ensureCurrentDayUsage = () => {
+    const currentDate = getCurrentDate();
+    const stored = localStorage.getItem('vid_usage_tracker_v2');
+    if (!stored) {
+      localStorage.setItem('vid_usage_tracker_v2', JSON.stringify({ date: currentDate, count: 0 }));
+      return 0;
+    }
+
+    try {
+      const parsed: any = JSON.parse(stored);
+      if (parsed && parsed.date === currentDate) {
+        return parsed.count || 0;
+      }
+    } catch (e) {
+      void e;
+    }
+
+    localStorage.setItem('vid_usage_tracker_v2', JSON.stringify({ date: currentDate, count: 0 }));
+    return 0;
+  };
+
+  const scrollToActiveCard = (triggerElement?: HTMLElement) => {
+    const target = triggerElement?.closest('.action-card') ?? triggerElement;
+    target?.scrollIntoView({ behavior: 'auto', block: 'center' });
+  };
+
+  const openLimitModal = (triggerElement?: HTMLElement) => {
+    scrollToActiveCard(triggerElement);
+    if (limitModalAnimationFrameRef.current !== null) {
+      window.cancelAnimationFrame(limitModalAnimationFrameRef.current);
+    }
+    limitModalAnimationFrameRef.current = window.requestAnimationFrame(() => {
+      setShowLimitModal(true);
+    });
+  };
+
+  const incrementUsage = (triggerElement?: HTMLElement) => {
+    if (isPremium) return true;
+
+    const currentCount = ensureCurrentDayUsage();
+    if (currentCount >= FREE_DAILY_LIMIT) {
+      openLimitModal(triggerElement);
+      return false;
+    }
+
+    const newCount = currentCount + 1;
+    const currentDate = getCurrentDate();
+    localStorage.setItem('vid_usage_tracker_v2', JSON.stringify({ date: currentDate, count: newCount }));
+    setUsageCount(newCount);
+    return true;
+  };
+
+  const resizeRes = useMemo(() => {
+    const q = parseInt(selectedQuality, 10);
     let w = q;
     let h = q;
 
@@ -54,18 +178,63 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
       h = Math.round(q * 1.25);
     }
 
-    setResizeRes({ w, h });
+    return { w, h };
   }, [selectedFrame, selectedQuality]);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newFiles = Array.from(e.target.files).map(file => ({
-        id: Math.random().toString(36).substr(2, 9),
-        file,
-        preview: URL.createObjectURL(file),
-        progress: 0,
-        status: 'idle' as const
-      }));
+      const selectedFiles = Array.from(e.target.files);
+      const newFiles: MediaFile[] = [];
+
+      for (const file of selectedFiles) {
+        // Validation logic
+        const isMp4 = file.name.toLowerCase().endsWith('.mp4');
+        const maxSize = isPremium ? PAID_FILE_SIZE_LIMIT : FREE_FILE_SIZE_LIMIT;
+
+        if (!isPremium && !isMp4) {
+          setFfmpegError(`Free tier supports MP4 only. Please upgrade for ${file.name.split('.').pop()?.toUpperCase()} support.`);
+          continue;
+        }
+
+        if (file.size > maxSize) {
+          setFfmpegError(`File too large. ${isPremium ? '500MB' : '50MB'} limit applied.`);
+          continue;
+        }
+
+        const preview = URL.createObjectURL(file);
+        
+        // Duration check for free users
+        if (!isPremium) {
+          const duration = await new Promise<number>((resolve) => {
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.onloadedmetadata = () => {
+              window.URL.revokeObjectURL(video.src);
+              resolve(video.duration);
+            };
+            video.src = preview;
+          });
+
+          if (duration > FREE_DURATION_LIMIT) {
+            setFfmpegError(`Video too long. Free tier limit is 2 minutes.`);
+            URL.revokeObjectURL(preview);
+            continue;
+          }
+        }
+
+        if (!isPremium && newFiles.length >= 1) {
+          setFfmpegError("Batch processing is a Pro feature. Please process files one by one or upgrade to Pro.");
+          break;
+        }
+
+        newFiles.push({
+          id: Math.random().toString(36).substr(2, 9),
+          file,
+          preview,
+          progress: 0,
+          status: 'idle' as const
+        });
+      }
       setMediaFiles(prev => [...prev, ...newFiles]);
     }
   };
@@ -82,7 +251,8 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     });
   };
 
-  const handleMuteVideo = async (fileObj: MediaFile) => {
+  const handleMuteVideo = async (fileObj: MediaFile, triggerElement?: HTMLElement) => {
+    if (!incrementUsage(triggerElement)) return;
     if (fileObj.processed) URL.revokeObjectURL(fileObj.processed);
     setIsFFmpegLoading(true);
     setMediaFiles(prev => prev.map(f =>
@@ -111,7 +281,8 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     }
   };
 
-  const handleExtractAudio = async (fileObj: MediaFile) => {
+  const handleExtractAudio = async (fileObj: MediaFile, triggerElement?: HTMLElement) => {
+    if (!incrementUsage(triggerElement)) return;
     if (fileObj.processed) URL.revokeObjectURL(fileObj.processed);
     setIsFFmpegLoading(true);
     setMediaFiles(prev => prev.map(f =>
@@ -140,7 +311,8 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     }
   };
 
-  const handleCompressVideo = async (fileObj: MediaFile) => {
+  const handleCompressVideo = async (fileObj: MediaFile, triggerElement?: HTMLElement) => {
+    if (!incrementUsage(triggerElement)) return;
     if (fileObj.processed) URL.revokeObjectURL(fileObj.processed);
     setIsFFmpegLoading(true);
     setMediaFiles(prev => prev.map(f =>
@@ -184,8 +356,9 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     }
   };
 
-  const handleAddAudio = async (fileObj: MediaFile) => {
+  const handleAddAudio = async (fileObj: MediaFile, triggerElement?: HTMLElement) => {
     if (!fileObj.audioFile) return;
+    if (!incrementUsage(triggerElement)) return;
     if (fileObj.processed) URL.revokeObjectURL(fileObj.processed);
     setIsFFmpegLoading(true);
     setMediaFiles(prev => prev.map(f =>
@@ -211,7 +384,8 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     }
   };
 
-  const handleResizeVideo = async (fileObj: MediaFile) => {
+  const handleResizeVideo = async (fileObj: MediaFile, triggerElement?: HTMLElement) => {
+    if (!incrementUsage(triggerElement)) return;
     if (fileObj.processed) URL.revokeObjectURL(fileObj.processed);
     setIsFFmpegLoading(true);
     setMediaFiles(prev => prev.map(f =>
@@ -275,6 +449,19 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
         >
           {description}
         </motion.p>
+
+        {!isPremium && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex justify-center mt-6"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold">
+              <RefreshCw size={14} className={usageCount > 0 ? 'animate-spin-slow' : ''} />
+              <span>{usageCount} / {FREE_DAILY_LIMIT} daily exports used</span>
+            </div>
+          </motion.div>
+        )}
       </header>
 
       {ffmpegError && (
@@ -310,7 +497,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
             <Upload className="text-primary" size={32} />
           </div>
           <h3 className="text-xl font-semibold mb-2">Select Videos</h3>
-          <p className="text-text-muted">Drag & drop MP4 files here</p>
+          <p className="text-text-muted">Drag & drop MP4 files here {!isPremium && '(Max 50MB)'}</p>
         </div>
 
         {mediaFiles.length > 0 && (
@@ -364,7 +551,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                         onChange={(e) => setSelectedQuality(e.target.value)}
                         className="tool-select py-2 h-auto"
                       >
-                        <option value="1080">1080p (Full HD)</option>
+                        <option value="1080" disabled={!isPremium}>1080p (Full HD) {!isPremium && '🔒'}</option>
                         <option value="720">720p (HD)</option>
                         <option value="480">480p (SD)</option>
                         <option value="360">360p</option>
@@ -384,61 +571,82 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                   exit={{ opacity: 0, scale: 0.95 }}
                   className="action-card"
                 >
-                  <div className="flex flex-col md:flex-row gap-8">
-                    <div className="w-full md:w-1/2">
-                      <div className="video-preview-container">
+                  <div className="grid grid-cols-[1fr,auto] gap-4 mb-6 px-1 items-start w-full min-w-0">
+                    <div className="min-w-0">
+                      <p className="font-bold text-text-main text-lg break-all leading-tight mb-1" title={file.file.name}>
+                        {file.file.name}
+                      </p>
+                      <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest leading-none">
+                        {file.file.type.split('/')[1] || 'media'} • {(file.file.size / (1024 * 1024)).toFixed(2)} MB
+                      </p>
+                    </div>
+                    {file.status !== 'idle' && (
+                      <span className={`status-badge shrink-0 mt-1 ${file.status === 'done' ? 'status-done' : 'status-processing'}`}>
+                        {file.status.toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-6">
+                    <div className="w-full">
+                      <div className="video-preview-container shadow-lg max-w-2xl mx-auto">
                         <video src={file.preview} controls muted={file.status === 'idle'} />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium truncate text-sm">{file.file.name}</p>
-                        <span className={`status-badge ${file.status === 'done' ? 'status-done' : 'status-processing'}`}>
-                          {file.status.toUpperCase()}
-                        </span>
                       </div>
                     </div>
 
-                    <div className="w-full md:w-1/2 flex flex-col justify-center gap-4">
-                      {(mode === 'all' || mode === 'mute') && (
-                        <button
-                          onClick={() => handleMuteVideo(file)}
-                          disabled={file.status === 'processing'}
-                          className="btn-primary w-full justify-center py-4 text-lg"
-                        >
-                          <VolumeX size={20} /> Remove Audio
-                        </button>
-                      )}
-                      {(mode === 'all' || mode === 'extract') && (
-                        <button
-                          onClick={() => handleExtractAudio(file)}
-                          disabled={file.status === 'processing'}
-                          className="btn-secondary w-full justify-center py-4 text-lg"
-                        >
-                          <FileAudio size={20} /> Extract Audio (MP3)
-                        </button>
-                      )}
+                    <div className="w-full flex flex-col items-center gap-4 max-w-xl mx-auto">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                        {(mode === 'all' || mode === 'mute') && (
+                          <button
+                            onClick={(e) => handleMuteVideo(file, e.currentTarget)}
+                            disabled={file.status === 'processing'}
+                            className="btn-primary w-full justify-center py-4 text-lg"
+                          >
+                            <VolumeX size={20} /> Remove Audio
+                          </button>
+                        )}
+                        {(mode === 'all' || mode === 'extract') && (
+                          <button
+                            onClick={(e) => handleExtractAudio(file, e.currentTarget)}
+                            disabled={file.status === 'processing'}
+                            className="btn-secondary w-full justify-center py-4 text-lg"
+                          >
+                            <FileAudio size={20} /> Extract Audio (MP3)
+                          </button>
+                        )}
 
-                      {mode === 'compress-video' && (
-                        <button
-                          onClick={() => handleCompressVideo(file)}
-                          disabled={file.status === 'processing'}
-                          className="btn-primary w-full justify-center py-4 text-lg"
-                        >
-                          Compress Now
-                        </button>
-                      )}
+                        {!isPremium && (
+                          <button
+                            onClick={() => window.location.href = '/pricing'}
+                            className="btn-secondary w-full justify-center py-4 text-lg opacity-60"
+                          >
+                            <Sparkles size={20} className="text-amber-500" /> AI Noise Removal 🔒
+                          </button>
+                        )}
 
-                      {mode === 'resize-video' && (
-                        <button
-                          onClick={() => handleResizeVideo(file)}
-                          disabled={file.status === 'processing'}
-                          className="btn-primary w-full justify-center py-4 text-lg"
-                        >
-                          Resize to {resizeRes.w}x{resizeRes.h}
-                        </button>
-                      )}
+                        {mode === 'compress-video' && (
+                          <button
+                            onClick={(e) => handleCompressVideo(file, e.currentTarget)}
+                            disabled={file.status === 'processing'}
+                            className="btn-primary w-full justify-center py-4 text-lg"
+                          >
+                            Compress Now
+                          </button>
+                        )}
+
+                        {mode === 'resize-video' && (
+                          <button
+                            onClick={(e) => handleResizeVideo(file, e.currentTarget)}
+                            disabled={file.status === 'processing'}
+                            className="btn-primary w-full justify-center py-4 text-lg"
+                          >
+                            Resize to {resizeRes.w}x{resizeRes.h}
+                          </button>
+                        )}
+                      </div>
 
                       {mode === 'add-audio' && (
-                        <div className="space-y-3">
+                        <div className="space-y-4 w-full">
                           <button
                             onClick={() => handleAudioPick(file.id)}
                             disabled={file.status === 'processing'}
@@ -448,18 +656,18 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                           </button>
 
                           {file.audioFile && (
-                            <div className="bg-bg-dark-alt/50 border border-glass-border rounded-xl p-3 flex flex-col gap-2">
+                            <div className="bg-bg-dark-alt/50 border border-glass-border rounded-2xl p-4 flex flex-col gap-3">
                               <div className="flex items-center justify-between">
-                                <span className="text-xs font-semibold text-text-muted uppercase">Selected Audio</span>
-                                <span className="text-xs text-primary font-medium">Ready</span>
+                                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Audio Source</span>
+                                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">Ready</span>
                               </div>
-                              <p className="text-sm font-medium truncate">{file.audioFile.name}</p>
+                              <p className="text-sm font-semibold truncate">{file.audioFile.name}</p>
                               <audio src={file.audioPreview} controls className="w-full h-8" />
                             </div>
                           )}
 
                           <button
-                            onClick={() => handleAddAudio(file)}
+                            onClick={(e) => handleAddAudio(file, e.currentTarget)}
                             disabled={file.status === 'processing' || !file.audioFile}
                             className="btn-primary w-full justify-center py-4 text-lg"
                           >
@@ -469,34 +677,34 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                       )}
 
                       {file.status === 'processing' && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-xs font-medium">
-                            <span>{isFFmpegLoading ? 'Loading Engine...' : 'Processing...'}</span>
+                        <div className="space-y-2 mt-2 w-full">
+                          <div className="flex justify-between text-xs font-bold text-primary">
+                            <span>{isFFmpegLoading ? 'ENGINE LOADING' : 'CONVERTING'}</span>
                             <span>{file.progress}%</span>
                           </div>
-                          <div className="progress-container">
-                            <div className="progress-bar" style={{ width: `${file.progress}%` }} />
+                          <div className="progress-container h-2 bg-gray-100">
+                            <div className="progress-bar rounded-full" style={{ width: `${file.progress}%` }} />
                           </div>
                           {isFFmpegLoading && (
-                            <p className="text-[10px] text-text-muted italic">Downloading processing core (one-time)...</p>
+                            <p className="text-[10px] text-text-muted italic text-center">Preparing processing core...</p>
                           )}
                         </div>
                       )}
 
                       {file.status === 'done' && (
                         <motion.button
-                          initial={{ scale: 0.9 }}
-                          animate={{ scale: 1 }}
+                          initial={{ scale: 0.9, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
                           onClick={() => downloadProcessed(file)}
-                          className="btn-primary w-full justify-center py-4 bg-success hover:bg-green-600 border-none mt-2 text-lg"
+                          className="btn-primary w-full justify-center py-4 bg-success hover:bg-emerald-600 border-none mt-2 text-lg shadow-lg shadow-emerald-100"
                         >
-                          <Download size={20} /> Download {file.processedType ? file.processedType.charAt(0).toUpperCase() + file.processedType.slice(1) : ''}
+                          <Download size={20} /> Download Result
                         </motion.button>
                       )}
 
                       <button
                         onClick={() => removeFile(file.id)}
-                        className="btn-danger w-full justify-center py-4 text-lg mt-auto"
+                        className="btn-danger w-full justify-center py-4 text-lg mt-2"
                       >
                         <X size={20} /> Cancel
                       </button>
@@ -559,7 +767,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
             },
             {
               q: "Is it completely free?",
-              a: "Basic tasks are free. We offer a Pro plan for unlimited usage and larger files."
+              a: "Basic tasks are free (up to 3 exports/day, 50MB max file size). We offer a Pro plan for unlimited usage and larger files."
             }
           ].map((faq, i) => (
             <motion.div
@@ -577,6 +785,67 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
           ))}
         </div>
       </section>
+
+      <AnimatePresence>
+        {showLimitModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative"
+            >
+              <button
+                onClick={() => setShowLimitModal(false)}
+                className="absolute top-4 right-4 text-text-muted hover:text-text-main transition-colors"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="flex flex-col items-center text-center space-y-6">
+                <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
+                  <Crown size={40} />
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold text-text-main">Monthly Limit Reached</h3>
+                  <p className="text-text-muted">
+                    {currentUser
+                      ? `You've reached your free limit of ${FREE_DAILY_LIMIT} files today. Upgrade to Pro for unlimited access.`
+                      : `You've reached your free limit of ${FREE_DAILY_LIMIT} files today. Upgrade to Pro for unlimited access. Create an account or log in to continue processing.`
+                    }
+                  </p>
+                </div>
+                <div className="w-full space-y-3">
+                  <button
+                    onClick={() => window.location.href = '/pricing'}
+                    className="w-full btn-primary justify-center py-4 text-lg bg-primary hover:bg-primary-hover shadow-lg shadow-primary/20"
+                  >
+                    <Zap size={20} fill="white" />
+                    Unlock Unlimited Access
+                  </button>
+
+                  {!currentUser && (
+                    <button
+                      onClick={() => window.location.href = '/login'}
+                      className="w-full btn-secondary justify-center py-4 text-lg"
+                    >
+                      Log In
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => setShowLimitModal(false)}
+                    className="w-full btn-secondary justify-center py-4 text-lg border-none hover:bg-gray-100"
+                  >
+                    Maybe Later
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </main>
   );
 };

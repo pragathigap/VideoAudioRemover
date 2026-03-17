@@ -34,8 +34,8 @@ export const muteVideo = async (
     if (err instanceof Error && err.message.includes('out of bounds')) ffmpeg = null;
     throw err;
   } finally {
-    try { await instance.deleteFile('input.mp4'); } catch (e) {}
-    try { await instance.deleteFile('output.mp4'); } catch (e) {}
+    try { await instance.deleteFile('input.mp4'); } catch (e) { void e; }
+    try { await instance.deleteFile('output.mp4'); } catch (e) { void e; }
   }
 };
 
@@ -58,8 +58,8 @@ export const extractAudio = async (
     if (err instanceof Error && err.message.includes('out of bounds')) ffmpeg = null;
     throw err;
   } finally {
-    try { await instance.deleteFile('input.mp4'); } catch (e) {}
-    try { await instance.deleteFile('output.mp3'); } catch (e) {}
+    try { await instance.deleteFile('input.mp4'); } catch (e) { void e; }
+    try { await instance.deleteFile('output.mp3'); } catch (e) { void e; }
   }
 };
 
@@ -83,8 +83,8 @@ export const compressVideo = async (
     if (err instanceof Error && err.message.includes('out of bounds')) ffmpeg = null;
     throw err;
   } finally {
-    try { await instance.deleteFile('input.mp4'); } catch (e) {}
-    try { await instance.deleteFile('output-compressed.mp4'); } catch (e) {}
+    try { await instance.deleteFile('input.mp4'); } catch (e) { void e; }
+    try { await instance.deleteFile('output-compressed.mp4'); } catch (e) { void e; }
   }
 };
 
@@ -109,8 +109,8 @@ export const resizeVideo = async (
     if (err instanceof Error && err.message.includes('out of bounds')) ffmpeg = null;
     throw err;
   } finally {
-    try { await instance.deleteFile('input.mp4'); } catch (e) {}
-    try { await instance.deleteFile('output-resized.mp4'); } catch (e) {}
+    try { await instance.deleteFile('input.mp4'); } catch (e) { void e; }
+    try { await instance.deleteFile('output-resized.mp4'); } catch (e) { void e; }
   }
 };
 
@@ -148,8 +148,8 @@ export const addAudioToVideo = async (
     if (err instanceof Error && err.message.includes('out of bounds')) ffmpeg = null;
     throw err;
   } finally {
-    try { await instance.deleteFile('video.mp4'); } catch (e) {}
-    try { await instance.deleteFile('audio.mp3'); } catch (e) {}
-    try { await instance.deleteFile('output-combined.mp4'); } catch (e) {}
+    try { await instance.deleteFile('video.mp4'); } catch (e) { void e; }
+    try { await instance.deleteFile('audio.mp3'); } catch (e) { void e; }
+    try { await instance.deleteFile('output-combined.mp4'); } catch (e) { void e; }
   }
 };

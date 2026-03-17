@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -8,18 +8,30 @@ import VideoCompressor from './pages/VideoCompressor';
 import VideoResizer from './pages/VideoResizer';
 import Pricing from './pages/Pricing';
 import Info from './pages/Info.tsx';
+import Dashboard from './pages/Dashboard';
 import Login from './pages/Login.tsx';
+import Signup from './pages/Signup.tsx';
 import AddAudio from './pages/AddAudio';
 import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 
+import { supabase } from './lib/supabase';
+import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
+
 const App: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
   // Use lowercase for cleaner URLs
   const [currentPage, setCurrentPage] = useState(() => {
     const path = window.location.pathname.substring(1);
     return path || 'remove-audio';
   });
+
+  const handleNavigate = useCallback((page: string) => {
+    setCurrentPage(page);
+    window.history.pushState({}, '', `/${page}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   React.useEffect(() => {
     const handlePopState = () => {
@@ -27,14 +39,28 @@ const App: React.FC = () => {
       setCurrentPage(path || 'remove-audio');
     };
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
 
-  const handleNavigate = (page: string) => {
-    setCurrentPage(page);
-    window.history.pushState({}, '', `/${page}`);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+    // Auth listener
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+      setUser(session?.user ?? null);
+      if (event === 'SIGNED_IN') {
+        const path = window.location.pathname.substring(1);
+        // Only redirect to dashboard on direct sign in, not on every page load
+        if (path === 'login' || path === 'signup') {
+          handleNavigate('dashboard');
+        }
+      }
+    });
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      subscription.unsubscribe();
+    };
+  }, [handleNavigate]);
 
   const renderPage = () => {
     if (currentPage.startsWith('info:')) {
@@ -64,6 +90,10 @@ const App: React.FC = () => {
         return <Pricing />;
       case 'login':
         return <Login onNavigate={handleNavigate} />;
+      case 'signup':
+        return <Signup onNavigate={handleNavigate} />;
+      case 'dashboard':
+        return <Dashboard onNavigate={handleNavigate} />;
       case 'contact':
         return <Contact />;
       case 'privacy':
@@ -77,7 +107,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar onNavigate={handleNavigate} currentPage={currentPage} />
+      <Navbar onNavigate={handleNavigate} currentPage={currentPage} user={user} />
       
       <div className="flex-1">
         {renderPage()}

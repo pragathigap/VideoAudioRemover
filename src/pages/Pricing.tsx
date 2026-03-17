@@ -106,34 +106,49 @@ const Pricing: React.FC = () => {
 
         <div className="pricing-grid">
           <PricingCard
+            title="Free Forever"
+            price="0"
+            period="Personal use"
+            buttonText="Get Started"
+            features={[
+              "50MB Max File Size",
+              "2 min Max Video Duration",
+              "3 Exports per day",
+              "MP4 Format Only",
+              "Browser-Based Processing",
+              "Standard Support"
+            ]}
+          />
+          <PricingCard
             title="Monthly"
-            price="1.99"
+            price="4.99"
             period="Billed Monthly"
             buttonText="Start Monthly Pro"
             features={[
-              "No Advertisements",
-              "Unlimited Remove Audio",
-              "Add Audio to Video – 20 Uses",
-              "Unlimited Extract Audio",
-              "Unlimited Video Compression",
-              "Unlimited Video Resizing"
+              "500MB Max File Size",
+              "Unlimited Video Length",
+              "Unlimited Exports per day",
+              "1080p / Original Quality",
+              "Priority Processing",
+              "All Formats (MOV, AVI, WebM)",
+              "No Advertisements"
             ]}
           />
           <PricingCard
             title="Annual"
-            price="14.99"
-            originalPrice="22.8"
-            period="Billed yearly • Save 37%"
+            price="39.99"
+            originalPrice="59.88"
+            period="Billed yearly • Save 33%"
             badge="Best Value"
             recommended={true}
             buttonText="Unlock Annual Elite"
             features={[
-              "No Advertisements",
-              "Unlimited Remove Audio",
-              "Unlimited Add Audio",
-              "Unlimited Extract Audio",
-              "Unlimited Video Compression",
-              "Unlimited Video Resizing"
+              "Everything in Monthly",
+              "Priority Support",
+              "Early Access to AI Tools",
+              "Bulk Processing Actions",
+              "Multi-Device Sync",
+              "Advanced Export Options"
             ]}
           />
         </div>
