@@ -29,7 +29,7 @@ const InfoPage: React.FC<InfoProps> = ({ section, onNavigate }) => {
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl md:text-5xl font-bold mb-4"
         >
-          {header.title} <span className="gradient-text">VidAudio</span>
+          {header.title} <span className="gradient-text">Remove Audio from Video</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 14 }}
@@ -61,10 +61,10 @@ const InfoPage: React.FC<InfoProps> = ({ section, onNavigate }) => {
 
       {section === 'about' && (
         <section className="glass-effect rounded-3xl p-8 mb-12">
-          <h2 className="text-2xl font-bold mb-4">Why VidAudio?</h2>
+          <h2 className="text-2xl font-bold mb-4">Why Remove Audio from Video?</h2>
           <div className="space-y-4">
             <p className="text-text-muted">
-              VidAudio Remover is a lightweight toolbox for common media jobs: remove audio from videos, extract MP3,
+              Remove Audio from Video is a lightweight toolbox for common media jobs: remove audio from videos, extract MP3,
               and export smaller compressed MP3 files.
             </p>
             <p className="text-text-muted">

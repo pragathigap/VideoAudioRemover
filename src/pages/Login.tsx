@@ -68,7 +68,7 @@ const Login: React.FC<LoginProps> = ({ onNavigate }) => {
       >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Log In</h1>
-          <p className="text-text-muted text-sm">Welcome back to VidAudio</p>
+          <p className="text-text-muted text-sm">Welcome back to Remove Audio from Video</p>
         </div>
 
         {error && (

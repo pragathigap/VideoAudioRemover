@@ -82,7 +82,7 @@ const Contact: React.FC = () => {
         className="text-center p-8 rounded-3xl border border-dashed border-glass-border"
       >
         <p className="text-text-muted text-sm italic">
-          "The best way to predict the future is to invent it. Your feedback helps us shape the next version of VidAudio."
+          "The best way to predict the future is to invent it. Your feedback helps us shape the next version of Remove Audio from Video."
         </p>
       </motion.div>
     </main>

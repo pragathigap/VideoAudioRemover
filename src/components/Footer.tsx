@@ -20,7 +20,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-cyan-400 rounded-lg flex items-center justify-center">
               <VideoIcon className="text-white" size={18} />
             </div>
-            <span className="text-lg font-bold gradient-text">VidAudio</span>
+            <span className="text-lg font-bold gradient-text">Remove Audio from Video</span>
           </div>
           <p className="text-sm text-text-muted">
             Professional browser-based media tools. Fast, private, and powerful.
@@ -48,7 +48,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         </div>
       </div>
       <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-glass-border text-center text-xs text-text-muted">
-        © {new Date().getFullYear()} VidAudio Remover. All rights reserved.
+        © {new Date().getFullYear()} Remove Audio from Video. All rights reserved.
       </div>
     </footer>
   );

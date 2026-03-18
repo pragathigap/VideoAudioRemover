@@ -38,7 +38,7 @@ const Terms: React.FC = () => {
             Acceptance of Terms
           </h2>
           <p className="text-text-muted leading-relaxed">
-            By using VidAudio, you agree to these terms. If you don't agree, please do not use the service. We provide these tools "as is" and "as available" for your creative and professional workflow.
+            By using Remove Audio from Video, you agree to these terms. If you don't agree, please do not use the service. We provide these tools "as is" and "as available" for your creative and professional workflow.
           </p>
         </motion.section>
 
@@ -55,7 +55,7 @@ const Terms: React.FC = () => {
             Acceptable Use
           </h2>
           <div className="space-y-4 text-text-muted">
-            <p>While using VidAudio, you agree NOT to:</p>
+            <p>While using Remove Audio from Video, you agree NOT to:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Attempt to reverse engineer the local processing engine.</li>
               <li>Use the tool for any illegal content processing.</li>
@@ -77,7 +77,7 @@ const Terms: React.FC = () => {
             Disclaimer of Warranty
           </h2>
           <p className="text-text-muted leading-relaxed mb-6">
-            VidAudio is provided without warranties of any kind. Since processing happens locally, results depend on your device hardware and browser capabilities. We are not responsible for any data loss occurring on your device.
+            Remove Audio from Video is provided without warranties of any kind. Since processing happens locally, results depend on your device hardware and browser capabilities. We are not responsible for any data loss occurring on your device.
           </p>
           <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-6 text-center">
             <p className="text-sm text-text-muted italic">

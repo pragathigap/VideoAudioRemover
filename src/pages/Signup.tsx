@@ -78,7 +78,7 @@ const Signup: React.FC<SignupProps> = ({ onNavigate }) => {
       >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Create Account</h1>
-          <p className="text-text-muted text-sm">Join VidAudio today</p>
+          <p className="text-text-muted text-sm">Join Remove Audio from Video today</p>
         </div>
 
         {error && (

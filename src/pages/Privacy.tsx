@@ -59,11 +59,11 @@ const Privacy: React.FC = () => {
           </h2>
           <div className="prose prose-invert max-w-none text-text-muted space-y-4">
             <p>
-              At VidAudio, we prioritize your data privacy above all else. Because our tools are browser-based:
+              At Remove Audio from Video, we prioritize your data privacy above all else. Because our tools are browser-based:
             </p>
             <ul className="list-disc pl-6 space-y-2">
               <li><strong>Video & Audio Files:</strong> We never upload your media files to our servers. All processing is done locally on your device via FFmpeg.wasm.</li>
-              <li><strong>Personal Data:</strong> We do not require account creation for basic usage. If you choose to go Pro, we only collect minimal billing information through our secure payment provider (Stripe).</li>
+              <li><strong>Personal Data:</strong> We do not require account creation for basic usage. If you choose to go Pro, we only collect minimal billing information through our secure payment provider (Razorpay).</li>
               <li><strong>Local Storage:</strong> We may use browser local storage to save your workspace preferences, which never leaves your device.</li>
             </ul>
           </div>

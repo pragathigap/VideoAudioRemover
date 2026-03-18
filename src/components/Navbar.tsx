@@ -35,7 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           <div className="brand-badge w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
             <VideoIcon className="text-white" size={24} />
           </div>
-          <span className="text-xl font-bold gradient-text truncate">VidAudio Remover</span>
+          <span className="text-xl font-bold gradient-text truncate">Remove Audio from Video</span>
         </div>
 
         <div className="hidden md:flex gap-2 items-center justify-center">
