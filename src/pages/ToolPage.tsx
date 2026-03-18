@@ -595,7 +595,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                     </div>
 
                     <div className="w-full flex flex-col items-center gap-4 max-w-xl mx-auto">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                      <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 w-full">
                         {(mode === 'all' || mode === 'mute') && (
                           <button
                             onClick={(e) => handleMuteVideo(file, e.currentTarget)}

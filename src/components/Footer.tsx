@@ -14,7 +14,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
   return (
     <footer className="footer">
-      <div className="footer-grid">
+      <div className="footer-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         <div className="cursor-pointer" onClick={() => navigate('remove-audio')}>
           <div className="flex items-center gap-2 mb-6">
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-cyan-400 rounded-lg flex items-center justify-center">
