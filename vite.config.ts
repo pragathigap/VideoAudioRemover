@@ -16,7 +16,10 @@ export default defineConfig({
           'vendor-supabase': ['@supabase/supabase-js'],
         },
       },
+      treeshake: true,
     },
+    minify: 'esbuild',
+    cssMinify: true,
     chunkSizeWarningLimit: 1000,
   },
   server: {
