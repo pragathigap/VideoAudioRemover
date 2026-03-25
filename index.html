@@ -35,11 +35,16 @@
       --accent: #22d3ee;
       --bg-dark: #ffffff;
       --text-main: #0f172a;
+      --text-muted: #475569;
+      --glass: rgba(255, 255, 255, 0.72);
+      --glass-border: rgba(15, 23, 42, 0.10);
     }
     body {
       margin: 0;
       background-color: var(--bg-dark);
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+      color: var(--text-main);
+      line-height: 1.6;
     }
     .navbar {
       background: rgba(3, 10, 80, 0.98);
@@ -48,6 +53,9 @@
       align-items: center;
       padding: 0 1.5rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
     .brand-badge {
       background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
@@ -55,6 +63,9 @@
       height: 40px;
       border-radius: 0.75rem;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .gradient-text {
       background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
@@ -62,18 +73,69 @@
       background-clip: text;
       -webkit-text-fill-color: transparent;
       font-weight: 700;
-      font-size: 1.25rem;
-      margin-left: 0.75rem;
+    }
+    .text-xl { font-size: 1.25rem; }
+    .text-4xl { font-size: 2.25rem; }
+    .text-lg { font-size: 1.125rem; }
+    .font-bold { font-weight: 700; }
+    .text-center { text-align: center; }
+    .text-text-muted { color: var(--text-muted); }
+    .max-w-4xl { max-width: 56rem; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-8 { margin-bottom: 2rem; }
+    .mb-12 { margin-bottom: 3rem; }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-3 { gap: 0.75rem; }
+    .flex-1 { flex: 1 1 0%; }
+    .glass-effect {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(15, 23, 42, 0.15);
     }
     @media (max-width: 768px) {
       .navbar { height: 64px; padding: 0 1rem; }
-      .gradient-text { font-size: 1rem; }
+      .text-4xl { font-size: 1.75rem; }
+      .text-xl { font-size: 1rem; }
+    }
+    @media (min-width: 768px) {
+      .md\:text-5xl { font-size: 3rem; }
     }
   </style>
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <!-- Static Shell for instant loading -->
+    <div class="min-h-screen flex flex-col">
+      <nav class="navbar glass-effect sticky top-0 z-50 px-6 flex items-center mb-8">
+        <div class="flex-1 flex items-center justify-between w-full h-full relative">
+          <div class="flex items-center gap-3 cursor-pointer min-w-0">
+            <div class="brand-badge w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.934a.5.5 0 0 0-.777-.416L16 11"></path><rect width="12" height="12" x="2" y="6" rx="2"></rect></svg>
+            </div>
+            <span class="text-xl font-bold gradient-text truncate">Remove Audio from Video</span>
+          </div>
+        </div>
+      </nav>
+      <div class="flex-1">
+        <main class="max-w-4xl mx-auto px-6">
+          <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+              Mute or Extract <span class="gradient-text">Magic</span>
+            </h1>
+            <p class="text-text-muted text-lg">
+              Upload a video, remove its audio, or extract MP3 audio.
+            </p>
+          </header>
+        </main>
+      </div>
+    </div>
+  </div>
   <script type="module" src="/src/main.tsx"></script>
 
   <!-- Non-critical analytics moved to bottom -->
