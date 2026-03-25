@@ -29,8 +29,9 @@ export const muteVideo = async (
   });
 
   try {
+    const threads = navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : '4';
     await instance.writeFile('input.mp4', await fetchFile(file));
-    await instance.exec(['-i', 'input.mp4', '-an', '-c:v', 'copy', 'output.mp4']);
+    await instance.exec(['-threads', threads, '-i', 'input.mp4', '-an', '-c:v', 'copy', 'output.mp4']);
     const data = await instance.readFile('output.mp4');
     const bytes = data instanceof Uint8Array ? new Uint8Array(data) : new Uint8Array(data as unknown as ArrayBuffer);
     return URL.createObjectURL(new Blob([bytes], { type: 'video/mp4' }));
@@ -53,8 +54,9 @@ export const extractAudio = async (
   });
 
   try {
+    const threads = navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : '4';
     await instance.writeFile('input.mp4', await fetchFile(file));
-    await instance.exec(['-i', 'input.mp4', '-vn', '-acodec', 'libmp3lame', 'output.mp3']);
+    await instance.exec(['-threads', threads, '-i', 'input.mp4', '-vn', '-acodec', 'libmp3lame', 'output.mp3']);
     const data = await instance.readFile('output.mp3');
     const bytes = data instanceof Uint8Array ? new Uint8Array(data) : new Uint8Array(data as unknown as ArrayBuffer);
     return URL.createObjectURL(new Blob([bytes], { type: 'audio/mp3' }));
@@ -114,8 +116,9 @@ export const resizeVideo = async (
   });
 
   try {
+    const threads = navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : '4';
     await instance.writeFile('input.mp4', await fetchFile(file));
-    await instance.exec(['-i', 'input.mp4', '-vf', `scale=${width}:${height}`, '-c:v', 'libx264', '-crf', '23', '-preset', preset, '-c:a', 'copy', 'output-resized.mp4']);
+    await instance.exec(['-threads', threads, '-i', 'input.mp4', '-vf', `scale=${width}:${height}`, '-c:v', 'libx264', '-crf', '23', '-preset', preset, '-c:a', 'copy', 'output-resized.mp4']);
     const data = await instance.readFile('output-resized.mp4');
     const bytes = data instanceof Uint8Array ? new Uint8Array(data) : new Uint8Array(data as unknown as ArrayBuffer);
     return URL.createObjectURL(new Blob([bytes], { type: 'video/mp4' }));
@@ -139,12 +142,12 @@ export const addAudioToVideo = async (
   });
 
   try {
+    const threads = navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : '4';
     await instance.writeFile('video.mp4', await fetchFile(videoFile));
     await instance.writeFile('audio.mp3', await fetchFile(audioFile));
     
-    // -i video -i audio -c:v copy -map 0:v:0 -map 1:a:0 -shortest
-    // This replaces existing audio with new audio, and cuts to the shortest stream
     await instance.exec([
+      '-threads', threads,
       '-i', 'video.mp4', 
       '-i', 'audio.mp3', 
       '-c:v', 'copy', 
