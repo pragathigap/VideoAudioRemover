@@ -503,9 +503,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
           className="text-4xl md:text-5xl font-bold mb-4"
           dangerouslySetInnerHTML={{ __html: title }}
         />
-        <p className="text-text-muted text-lg">
-          {description}
-        </p>
+        <p className="text-muted text-lg">{description}</p>
 
 
       </header>
