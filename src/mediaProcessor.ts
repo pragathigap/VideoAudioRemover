@@ -9,13 +9,34 @@ export const loadFFmpeg = async () => {
   
   ffmpeg = new FFmpeg();
   
-  // Use multi-threaded version for significantly faster processing
-  await ffmpeg.load({
-    coreURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.js`, 'text/javascript'),
-    wasmURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-    workerURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.worker.js`, 'text/javascript'),
-  });
+  const canUseMT = typeof SharedArrayBuffer !== 'undefined' && window.crossOriginIsolated;
   
+  if (canUseMT) {
+    try {
+      console.log('Loading Multi-threaded FFmpeg...');
+      // Try loading multi-threaded version from CDN for speed
+      await ffmpeg.load({
+        coreURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.js`, 'text/javascript'),
+        wasmURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+        workerURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.worker.js`, 'text/javascript'),
+      });
+      console.log('Multi-threaded FFmpeg loaded successfully');
+      return ffmpeg;
+    } catch (e) {
+      console.error('Failed to load MT version, falling back to ST:', e);
+      // Reset instance before fallback
+      ffmpeg = new FFmpeg();
+    }
+  }
+
+  console.log('Loading Single-threaded FFmpeg (Fallback)...');
+  // Fallback to local single-threaded version which is most compatible
+  const stBaseURL = window.location.origin + '/ffmpeg';
+  await ffmpeg.load({
+    coreURL: `${stBaseURL}/ffmpeg-core.js`,
+    wasmURL: `${stBaseURL}/ffmpeg-core.wasm`,
+  });
+  console.log('Single-threaded FFmpeg loaded');
   return ffmpeg;
 };
 
