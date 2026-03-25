@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Upload, Download, CheckCircle2, VolumeX, FileAudio, RefreshCw, X, Crown, Zap, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { muteVideo, extractAudio, compressVideo, resizeVideo, addAudioToVideo } from '../mediaProcessor';
+import { loadFFmpeg, muteVideo, extractAudio, compressVideo, resizeVideo, addAudioToVideo } from '../mediaProcessor';
 import { supabase } from '../lib/supabase';
 import type { Session, User } from '@supabase/supabase-js';
 
@@ -323,8 +323,9 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     ));
 
     try {
+      await loadFFmpeg();
+      setIsFFmpegLoading(false);
       const result = await muteVideo(fileObj.file, (p) => {
-        setIsFFmpegLoading(false);
         setMediaFiles(prev => prev.map(f =>
           f.id === fileObj.id ? { ...f, progress: p } : f
         ));
@@ -353,8 +354,9 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     ));
 
     try {
+      await loadFFmpeg();
+      setIsFFmpegLoading(false);
       const result = await extractAudio(fileObj.file, (p) => {
-        setIsFFmpegLoading(false);
         setMediaFiles(prev => prev.map(f =>
           f.id === fileObj.id ? { ...f, progress: p } : f
         ));
@@ -383,8 +385,9 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     ));
 
     try {
+      await loadFFmpeg();
+      setIsFFmpegLoading(false);
       const result = await compressVideo(fileObj.file, compressionCrf, (p) => {
-        setIsFFmpegLoading(false);
         setMediaFiles(prev => prev.map(f =>
           f.id === fileObj.id ? { ...f, progress: p } : f
         ));
@@ -429,8 +432,9 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     ));
 
     try {
+      await loadFFmpeg();
+      setIsFFmpegLoading(false);
       const result = await addAudioToVideo(fileObj.file, fileObj.audioFile, (p) => {
-        setIsFFmpegLoading(false);
         setMediaFiles(prev => prev.map(f =>
           f.id === fileObj.id ? { ...f, progress: p } : f
         ));
@@ -456,8 +460,9 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     ));
 
     try {
+      await loadFFmpeg();
+      setIsFFmpegLoading(false);
       const result = await resizeVideo(fileObj.file, resizeRes.w, resizeRes.h, (p) => {
-        setIsFFmpegLoading(false);
         setMediaFiles(prev => prev.map(f =>
           f.id === fileObj.id ? { ...f, progress: p } : f
         ));
