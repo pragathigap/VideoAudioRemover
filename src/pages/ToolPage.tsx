@@ -505,14 +505,9 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
           className="text-4xl md:text-5xl font-bold mb-4"
           dangerouslySetInnerHTML={{ __html: title }}
         />
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-text-muted text-lg"
-        >
+        <p className="text-text-muted text-lg">
           {description}
-        </motion.p>
+        </p>
 
 
       </header>
