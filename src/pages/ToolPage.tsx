@@ -499,9 +499,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
   return (
     <main className="max-w-4xl mx-auto px-6">
       <header className="text-center mb-12">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <h1
           className="text-4xl md:text-5xl font-bold mb-4"
           dangerouslySetInnerHTML={{ __html: title }}
         />
