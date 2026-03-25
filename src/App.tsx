@@ -40,25 +40,27 @@ const App: React.FC = () => {
     };
     window.addEventListener('popstate', handlePopState);
 
-    // Auth listener
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
+    const subscription = supabase
+      ? supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+          setUser(session?.user ?? null);
+          if (event === 'SIGNED_IN') {
+            const path = window.location.pathname.substring(1);
+            if (path === 'login' || path === 'signup') {
+              handleNavigate('dashboard');
+            }
+          }
+        }).data.subscription
+      : null;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
-      setUser(session?.user ?? null);
-      if (event === 'SIGNED_IN') {
-        const path = window.location.pathname.substring(1);
-        // Only redirect to dashboard on direct sign in, not on every page load
-        if (path === 'login' || path === 'signup') {
-          handleNavigate('dashboard');
-        }
-      }
-    });
+    if (supabase) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+      });
+    }
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
-      subscription.unsubscribe();
+      subscription?.unsubscribe();
     };
   }, [handleNavigate]);
 
@@ -87,7 +89,7 @@ const App: React.FC = () => {
       case 'add-audio':
         return <AddAudio />;
       case 'pricing':
-        return <Pricing />;
+        return <Pricing onNavigate={handleNavigate} />;
       case 'login':
         return <Login onNavigate={handleNavigate} />;
       case 'signup':

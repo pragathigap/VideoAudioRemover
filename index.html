@@ -6,24 +6,82 @@
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <link rel="apple-touch-icon" href="/logo.svg" />
   <link rel="shortcut icon" href="/logo.svg" />
+  <link rel="manifest" href="/manifest.json" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Remove Audio from Video | Professional Video & Audio Tools</title>
   <meta name="description"
     content="Professional, privacy-focused video and audio tools. Process your media locally in your browser—no uploads required. Mute, extract, compress, and resize with Remove Audio from Video." />
 
-  <script type="text/javascript">
-    (function (c, l, a, r, i, t, y) {
-      c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-      t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
-      y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-    })(window, document, "clarity", "script", "vxjylppvve");
-  </script>
+  <!-- Preconnect to Font Servers -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Optimized Font Loading -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </noscript>
 
+  <meta name="google-site-verification" content="pQ5ujxubVFowkn3v_s8rwY5thQuYsoo27OBhu2wJVFw" />
+
+  <!-- Critical Inline CSS -->
+  <style>
+    :root {
+      --primary: #6366f1;
+      --accent: #22d3ee;
+      --bg-dark: #ffffff;
+      --text-main: #0f172a;
+    }
+    body {
+      margin: 0;
+      background-color: var(--bg-dark);
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .navbar {
+      background: rgba(3, 10, 80, 0.98);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
+      width: 40px;
+      height: 40px;
+      border-radius: 0.75rem;
+      flex-shrink: 0;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-left: 0.75rem;
+    }
+    @media (max-width: 768px) {
+      .navbar { height: 64px; padding: 0 1rem; }
+      .gradient-text { font-size: 1rem; }
+    }
+  </style>
 </head>
 
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
+
+  <!-- Non-critical analytics moved to bottom -->
+  <script type="text/javascript">
+    (function (c, l, a, r, i, t, y) {
+      c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+      t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+      t.crossOrigin = "anonymous";
+      y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+    })(window, document, "clarity", "script", "vxjylppvve");
+  </script>
+  <script src="https://analytics.ahrefs.com/analytics.js" data-key="2MsDFNVbqmVMKyvIj3Hshw" crossorigin="anonymous" async></script>
 </body>
 
 </html>

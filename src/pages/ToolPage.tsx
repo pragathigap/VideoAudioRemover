@@ -26,6 +26,54 @@ interface MediaFile {
   status: 'idle' | 'processing' | 'done' | 'error';
 }
 
+const toolContentMap: Record<string, { title: string, subtitle: string, items: { q: string, a: string }[] }> = {
+  'mute': {
+    title: "Why Remove Audio?",
+    subtitle: "The fastest way to mute videos directly in your browser.",
+    items: [
+      { q: "Perfect for Social Media", a: "Mute original audio before adding trending sounds on platforms like TikTok and Instagram Reels." },
+      { q: "Clean B-Roll", a: "Remove distracting background noise, wind, or chatter from your footage before editing." },
+      { q: "Zero Quality Loss", a: "We strip the audio track without re-encoding the video stream, preserving 100% of the original video quality." }
+    ]
+  },
+  'extract': {
+    title: "Why Extract MP3?",
+    subtitle: "Turn any video into a high-quality audio file instantly.",
+    items: [
+      { q: "Podcasts & Interviews", a: "Easily convert video podcasts or long-form interviews into MP3s for listening on the go." },
+      { q: "Save Background Music", a: "Extract that perfect background track or sound bite from a recorded clip." },
+      { q: "High Quality Audio", a: "We extract the audio directly with high-fidelity encoding, ensuring crisp sound." }
+    ]
+  },
+  'compress-video': {
+    title: "Why Compress Video?",
+    subtitle: "Reduce file sizes drastically without sacrificing visual quality.",
+    items: [
+      { q: "Discord & Email Ready", a: "Shrink massive video files to bypass attachment limits on messaging apps and email." },
+      { q: "Faster Uploads", a: "Smaller files mean lightning-fast uploads to YouTube, Instagram, and web forms." },
+      { q: "Smart FFmpeg Engine", a: "We use advanced CRF compression to significantly drop file size while keeping the video looking crisp." }
+    ]
+  },
+  'resize-video': {
+    title: "Why Resize Video?",
+    subtitle: "Perfectly frame and scale your videos for any platform.",
+    items: [
+      { q: "Social Media Formats", a: "Instantly crop and resize to 9:16 for TikTok/Shorts or 1:1 for Instagram feeds." },
+      { q: "Fix Resolution", a: "Lower 4K footage down to standard 1080p or 720p for easier sharing and editing performance." },
+      { q: "Black Bar Prevention", a: "Our tools intelligently fit or crop video dimensions to avoid ugly black bars." }
+    ]
+  },
+  'add-audio': {
+    title: "Why Add Audio?",
+    subtitle: "Replace or overlay new audio tracks onto your videos.",
+    items: [
+      { q: "Background Music", a: "Easily attach a background music track to your silent or muted video clips." },
+      { q: "Voiceovers & Dubs", a: "Sync a newly recorded voiceover file directly to your existing video footage." },
+      { q: "Instant Merging", a: "Our web-based engine multiplexes the video and audio files locally in seconds." }
+    ]
+  }
+};
+
 const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [isFFmpegLoading, setIsFFmpegLoading] = useState(false);
@@ -39,6 +87,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
   const [compressionCrf, setCompressionCrf] = useState(28); // 18-28 is good range
   const [selectedFrame, setSelectedFrame] = useState('16:9');
   const [selectedQuality, setSelectedQuality] = useState('720');
+  const [processingSpeed, setProcessingSpeed] = useState('medium');
 
   const FREE_DAILY_LIMIT = 3;
   const FREE_FILE_SIZE_LIMIT = 50 * 1024 * 1024; // 50MB
@@ -46,6 +95,20 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
   const FREE_DURATION_LIMIT = 120; // 2 minutes
 
   const getCurrentDate = () => new Date().toISOString().slice(0, 10);
+
+  const parseUsageTracker = (stored: string): { date: string; count: number } | null => {
+    try {
+      const parsed: unknown = JSON.parse(stored);
+      if (!parsed || typeof parsed !== 'object') return null;
+      const date = (parsed as { date?: unknown }).date;
+      const count = (parsed as { count?: unknown }).count;
+      if (typeof date !== 'string' || typeof count !== 'number') return null;
+      return { date, count };
+    } catch (e) {
+      void e;
+      return null;
+    }
+  };
 
   const getInitialUsageCount = () => {
     const currentDate = getCurrentDate();
@@ -55,14 +118,8 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
       return 0;
     }
 
-    try {
-      const parsed: any = JSON.parse(stored);
-      if (parsed && parsed.date === currentDate) {
-        return parsed.count || 0;
-      }
-    } catch (e) {
-      void e;
-    }
+    const parsed = parseUsageTracker(stored);
+    if (parsed && parsed.date === currentDate) return parsed.count;
 
     localStorage.setItem('vid_usage_tracker_v2', JSON.stringify({ date: currentDate, count: 0 }));
     return 0;
@@ -72,10 +129,6 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
   const [isPremium, setIsPremium] = useState(false);
   const [usageCount, setUsageCount] = useState<number>(() => getInitialUsageCount());
   const [showLimitModal, setShowLimitModal] = useState(false);
-
-  useEffect(() => {
-    setUsageCount(getInitialUsageCount());
-  }, [mode]);
 
   useEffect(() => {
     return () => {
@@ -90,8 +143,19 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
 
     const applyUser = (user: User | null) => {
       setCurrentUser(user);
-      setIsPremium(!!user?.user_metadata?.is_premium);
+      const isUserPremium = !!user?.user_metadata?.is_premium;
+      setIsPremium(isUserPremium);
+      if (isUserPremium && processingSpeed === 'medium') {
+        setProcessingSpeed('fast');
+      }
     };
+
+    if (!supabase) {
+      applyUser(null);
+      return () => {
+        isMounted = false;
+      };
+    }
 
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!isMounted) return;
@@ -115,19 +179,18 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     const stored = localStorage.getItem('vid_usage_tracker_v2');
     if (!stored) {
       localStorage.setItem('vid_usage_tracker_v2', JSON.stringify({ date: currentDate, count: 0 }));
+      if (usageCount !== 0) setUsageCount(0);
       return 0;
     }
 
-    try {
-      const parsed: any = JSON.parse(stored);
-      if (parsed && parsed.date === currentDate) {
-        return parsed.count || 0;
-      }
-    } catch (e) {
-      void e;
+    const parsed = parseUsageTracker(stored);
+    if (parsed && parsed.date === currentDate) {
+      if (parsed.count !== usageCount) setUsageCount(parsed.count);
+      return parsed.count;
     }
 
     localStorage.setItem('vid_usage_tracker_v2', JSON.stringify({ date: currentDate, count: 0 }));
+    if (usageCount !== 0) setUsageCount(0);
     return 0;
   };
 
@@ -325,7 +388,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
         setMediaFiles(prev => prev.map(f =>
           f.id === fileObj.id ? { ...f, progress: p } : f
         ));
-      });
+      }, processingSpeed);
 
       setMediaFiles(prev => prev.map(f =>
         f.id === fileObj.id ? { ...f, processed: result, processedType: 'video', status: 'done', progress: 100 } : f
@@ -398,7 +461,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
         setMediaFiles(prev => prev.map(f =>
           f.id === fileObj.id ? { ...f, progress: p } : f
         ));
-      });
+      }, processingSpeed);
 
       setMediaFiles(prev => prev.map(f =>
         f.id === fileObj.id ? { ...f, processed: result, processedType: 'video', status: 'done', progress: 100 } : f
@@ -410,6 +473,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
       setMediaFiles(prev => prev.map(f => f.id === fileObj.id ? { ...f, status: 'error' } : f));
     }
   };
+
 
   const downloadProcessed = (fileObj: MediaFile) => {
     if (!fileObj.processed) return;
@@ -450,18 +514,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
           {description}
         </motion.p>
 
-        {!isPremium && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex justify-center mt-6"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold">
-              <RefreshCw size={14} className={usageCount > 0 ? 'animate-spin-slow' : ''} />
-              <span>{usageCount} / {FREE_DAILY_LIMIT} daily exports used</span>
-            </div>
-          </motion.div>
-        )}
+
       </header>
 
       {ffmpegError && (
@@ -509,14 +562,29 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                     <p className="font-semibold">Compression Quality</p>
                     <p className="text-sm text-text-muted">Higher CRF = Smaller file, lower quality</p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm">CRF: {compressionCrf}</span>
-                    <input
-                      type="range" min="18" max="51" step="1"
-                      value={compressionCrf}
-                      onChange={(e) => setCompressionCrf(parseInt(e.target.value))}
-                      className="accent-primary"
-                    />
+                  <div className="flex items-center gap-6">
+                    <div className="flex flex-col gap-1 min-w-[120px]">
+                      <span className="text-[10px] font-bold uppercase text-text-muted ml-1">Speed</span>
+                      <select
+                        value={processingSpeed}
+                        onChange={(e) => setProcessingSpeed(e.target.value)}
+                        className="tool-select py-2 h-auto"
+                      >
+                        <option value="ultrafast" disabled={!isPremium}>Turbo (Ultrafast) {!isPremium && '🔒'}</option>
+                        <option value="fast" disabled={!isPremium}>Fast (Pro Default) {!isPremium && '🔒'}</option>
+                        <option value="medium">Medium (Free Default)</option>
+                        <option value="slow" disabled={!isPremium}>High Quality (Slow) {!isPremium && '🔒'}</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm">CRF: {compressionCrf}</span>
+                      <input
+                        type="range" min="18" max="51" step="1"
+                        value={compressionCrf}
+                        onChange={(e) => setCompressionCrf(parseInt(e.target.value))}
+                        className="accent-primary"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -557,10 +625,25 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                         <option value="360">360p</option>
                       </select>
                     </div>
+
+                    <div className="flex flex-col gap-1 min-w-[120px]">
+                      <span className="text-[10px] font-bold uppercase text-text-muted ml-1">Speed</span>
+                      <select
+                        value={processingSpeed}
+                        onChange={(e) => setProcessingSpeed(e.target.value)}
+                        className="tool-select py-2 h-auto"
+                      >
+                        <option value="ultrafast" disabled={!isPremium}>Turbo (Ultrafast) {!isPremium && '🔒'}</option>
+                        <option value="fast" disabled={!isPremium}>Fast (Pro Default) {!isPremium && '🔒'}</option>
+                        <option value="medium">Medium (Free Default)</option>
+                        <option value="slow" disabled={!isPremium}>High Quality (Slow) {!isPremium && '🔒'}</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
             )}
+
 
             <AnimatePresence>
               {mediaFiles.map(file => (
@@ -590,7 +673,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                   <div className="flex flex-col gap-6">
                     <div className="w-full">
                       <div className="video-preview-container shadow-lg max-w-2xl mx-auto">
-                        <video src={file.preview} controls muted={file.status === 'idle'} />
+                        <video src={file.processed || file.preview} key={file.processed || file.preview} controls muted={file.status === 'idle' && !file.processed} />
                       </div>
                     </div>
 
@@ -615,14 +698,6 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                           </button>
                         )}
 
-                        {!isPremium && (
-                          <button
-                            onClick={() => window.location.href = '/pricing'}
-                            className="btn-secondary w-full justify-center py-4 text-lg opacity-60"
-                          >
-                            <Sparkles size={20} className="text-amber-500" /> AI Noise Removal 🔒
-                          </button>
-                        )}
 
                         {mode === 'compress-video' && (
                           <button
@@ -738,53 +813,43 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
         ))}
       </section>
 
-      <section className="mt-32 mb-40">
-        <header className="mb-12 text-center">
-          <motion.h2
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="text-3xl font-bold mb-3"
-          >
-            Frequently Asked <span className="gradient-text">Questions</span>
-          </motion.h2>
-          <p className="text-text-muted max-w-lg mx-auto">Everything you need to know about our browser-based processing engine.</p>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {[
-            {
-              q: "Do you upload my files?",
-              a: "No. Processing runs locally in your browser for supported tools. Your files remain on your device."
-            },
-            {
-              q: "What formats are supported?",
-              a: "Video tools support common web video formats. Audio exports are high-quality MP3."
-            },
-            {
-              q: "Why does the first run take longer?",
-              a: "Some features load a processing engine the first time. After that, it's much faster."
-            },
-            {
-              q: "Is it completely free?",
-              a: "Basic tasks are free (up to 3 exports/day, 50MB max file size). We offer a Pro plan for unlimited usage and larger files."
-            }
-          ].map((faq, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+      {toolContentMap[mode] && (
+        <section className="mt-32 mb-40">
+          <header className="mb-12 text-center">
+            <motion.h2
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -5 }}
-              className="faq-glass-card"
+              className="text-3xl font-bold mb-3"
             >
-              <h3 className="faq-question">{faq.q}</h3>
-              <p className="faq-answer">{faq.a}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+              {toolContentMap[mode].title.split(" ").slice(0, -1).join(" ")} <span className="gradient-text">{toolContentMap[mode].title.split(" ").slice(-1)}</span>
+            </motion.h2>
+            <p className="text-text-muted max-w-lg mx-auto">{toolContentMap[mode].subtitle}</p>
+          </header>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {toolContentMap[mode].items.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -5 }}
+                className="glass-effect p-8 rounded-2xl flex flex-col items-start border border-white/5"
+              >
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
+                  <Sparkles className="text-primary" size={20} />
+                </div>
+                <h3 className="font-bold text-lg text-text-main mb-3">{item.q}</h3>
+                <p className="text-sm text-text-muted leading-relaxed">{item.a}</p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      )}
+
+
 
       <AnimatePresence>
         {showLimitModal && (

@@ -66,7 +66,8 @@ export const extractAudio = async (
 export const compressVideo = async (
   file: File,
   crf: number,
-  onProgress: (p: number) => void
+  onProgress: (p: number) => void,
+  preset: string = 'medium'
 ): Promise<string> => {
   const instance = await loadFFmpeg();
   instance.on('progress', ({ progress }) => {
@@ -75,7 +76,7 @@ export const compressVideo = async (
 
   try {
     await instance.writeFile('input.mp4', await fetchFile(file));
-    await instance.exec(['-i', 'input.mp4', '-vcodec', 'libx264', '-crf', crf.toString(), 'output-compressed.mp4']);
+    await instance.exec(['-i', 'input.mp4', '-vcodec', 'libx264', '-crf', crf.toString(), '-preset', preset, 'output-compressed.mp4']);
     const data = await instance.readFile('output-compressed.mp4');
     const bytes = data instanceof Uint8Array ? new Uint8Array(data) : new Uint8Array(data as unknown as ArrayBuffer);
     return URL.createObjectURL(new Blob([bytes], { type: 'video/mp4' }));
@@ -92,7 +93,8 @@ export const resizeVideo = async (
   file: File,
   width: number,
   height: number,
-  onProgress: (p: number) => void
+  onProgress: (p: number) => void,
+  preset: string = 'medium'
 ): Promise<string> => {
   const instance = await loadFFmpeg();
   instance.on('progress', ({ progress }) => {
@@ -101,7 +103,7 @@ export const resizeVideo = async (
 
   try {
     await instance.writeFile('input.mp4', await fetchFile(file));
-    await instance.exec(['-i', 'input.mp4', '-vf', `scale=${width}:${height}`, '-c:v', 'libx264', '-crf', '23', '-c:a', 'copy', 'output-resized.mp4']);
+    await instance.exec(['-i', 'input.mp4', '-vf', `scale=${width}:${height}`, '-c:v', 'libx264', '-crf', '23', '-preset', preset, '-c:a', 'copy', 'output-resized.mp4']);
     const data = await instance.readFile('output-resized.mp4');
     const bytes = data instanceof Uint8Array ? new Uint8Array(data) : new Uint8Array(data as unknown as ArrayBuffer);
     return URL.createObjectURL(new Blob([bytes], { type: 'video/mp4' }));
@@ -153,3 +155,4 @@ export const addAudioToVideo = async (
     try { await instance.deleteFile('output-combined.mp4'); } catch (e) { void e; }
   }
 };
+

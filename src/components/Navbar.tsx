@@ -38,7 +38,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           <span className="text-xl font-bold gradient-text truncate">Remove Audio from Video</span>
         </div>
 
-        <div className="hidden md:flex gap-2 items-center justify-center">
+        <div className="hidden lg:flex gap-2 items-center justify-center">
           <button
             type="button"
             onClick={() => navigate('pricing')}
@@ -83,7 +83,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           </button>
         </div>
 
-        <div className="hidden md:flex justify-end gap-3">
+        <div className="hidden lg:flex justify-end gap-3">
           {user ? (
             <button
               type="button"
@@ -104,7 +104,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           )}
         </div>
 
-        <div className="md:hidden flex items-center">
+        <div className="lg:hidden flex items-center">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="text-white p-2"
@@ -115,7 +115,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
       </div>
 
       {isMobileMenuOpen && (
-        <div className="mobile-menu-overlay md:hidden">
+        <div className="mobile-menu-overlay lg:hidden">
           <button onClick={() => navigate('pricing')} className={`${navItemClass(active === 'pricing')} w-full justify-start py-3 px-4`}>Pricing</button>
           <button onClick={() => navigate('remove-audio')} className={`${navItemClass(active === 'remove-audio')} w-full justify-start py-3 px-4`}>Remove Audio</button>
           <button onClick={() => navigate('add-audio')} className={`${navItemClass(active === 'add-audio')} w-full justify-start py-3 px-4`}>Add Audio</button>

@@ -29,6 +29,10 @@ const Signup: React.FC<SignupProps> = ({ onNavigate }) => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
+    if (!supabase) {
+      setError('Auth is not configured.');
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -59,6 +63,10 @@ const Signup: React.FC<SignupProps> = ({ onNavigate }) => {
   };
 
   const handleGoogleSignup = async () => {
+    if (!supabase) {
+      setError('Auth is not configured.');
+      return;
+    }
     try {
       const { error: googleError } = await supabase.auth.signInWithOAuth({
         provider: 'google',

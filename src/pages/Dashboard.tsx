@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { LogOut, Crown, Mail, ShieldCheck } from 'lucide-react';
+import { LogOut, Crown, Mail, ShieldCheck, User as UserIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
@@ -11,30 +11,18 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [usage, setUsage] = useState({ count: 0, month: '' });
-  const MONTHLY_LIMIT = 10;
-
   useEffect(() => {
     const getUser = async () => {
+      if (!supabase) {
+        setLoading(false);
+        return;
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         onNavigate('login');
       } else {
         setUser(user);
-        
-        // Load usage from localStorage
-        const currentMonth = new Date().toISOString().slice(0, 7);
-        const stored = localStorage.getItem('vid_usage_tracker');
-        if (stored) {
-          const data = JSON.parse(stored);
-          if (data.month === currentMonth) {
-            setUsage(data);
-          } else {
-            setUsage({ count: 0, month: currentMonth });
-          }
-        } else {
-          setUsage({ count: 0, month: currentMonth });
-        }
       }
       setLoading(false);
     };
@@ -42,6 +30,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   }, [onNavigate]);
 
   const handleLogout = async () => {
+    if (!supabase) {
+      onNavigate('login');
+      return;
+    }
     await supabase.auth.signOut();
     onNavigate('login');
   };
@@ -51,6 +43,31 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       <div className="flex h-screen items-center justify-center bg-bg-dark">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
+    );
+  }
+
+  if (!supabase) {
+    return (
+      <main className="dashboard-content min-h-screen py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-effect rounded-3xl p-6 md:p-12 border border-white/20 shadow-2xl relative overflow-hidden text-center"
+            style={{ background: 'rgba(255, 255, 255, 0.9)' }}
+          >
+            <h1 className="text-3xl font-bold mb-2 text-text-main">Auth not configured</h1>
+            <p className="text-text-muted mb-8">Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable dashboard.</p>
+            <button
+              type="button"
+              onClick={() => onNavigate('remove-audio')}
+              className="btn-primary justify-center py-3 px-8"
+            >
+              Back to Tools
+            </button>
+          </motion.div>
+        </div>
+      </main>
     );
   }
 
@@ -95,13 +112,21 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                   </div>
                   <div className="flex items-center justify-between gap-4">
                     <span className="text-text-muted text-sm">Premium account:</span>
-                    <button 
-                      onClick={() => onNavigate('pricing')}
-                      className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg text-sm font-bold transition-all"
-                      style={{ backgroundColor: '#3b82f6' }}
-                    >
-                      Buy Premium
-                    </button>
+                    {!user?.user_metadata?.is_premium && (
+                      <button 
+                        onClick={() => onNavigate('pricing')}
+                        className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg text-sm font-bold transition-all"
+                        style={{ backgroundColor: '#3b82f6' }}
+                      >
+                        Buy Premium
+                      </button>
+                    )}
+                    {user?.user_metadata?.is_premium && (
+                      <span className="text-green-600 font-bold text-sm bg-green-50 px-3 py-1 rounded-full border border-green-100 flex items-center gap-1">
+                        <ShieldCheck size={14} />
+                        Active
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-text-muted text-sm">Active subscription:</span>
@@ -109,26 +134,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                       {user?.user_metadata?.is_premium ? 'Pro Plan' : 'Free Plan'}
                     </span>
                   </div>
-                  {!user?.user_metadata?.is_premium && (
-                    <div className="pt-2 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-text-muted text-xs">Monthly Usage:</span>
-                        <span className="text-xs font-bold text-primary">{usage.count} / {MONTHLY_LIMIT}</span>
-                      </div>
-                      <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                        <div 
-                          className="bg-primary h-full transition-all duration-500" 
-                          style={{ width: `${(usage.count / MONTHLY_LIMIT) * 100}%` }}
-                        />
-                      </div>
-                      <p className="text-[10px] text-text-muted text-center italic">
-                        Usage resets on the 1st of next month
-                      </p>
-                    </div>
-                  )}
+
                    <div className="flex items-center justify-between">
                     <span className="text-text-muted text-sm">Subscription ends:</span>
-                    <span className="font-medium text-sm">-</span>
+                    <span className="font-medium text-sm">
+                      {user?.user_metadata?.premium_expires_at 
+                        ? new Date(user.user_metadata.premium_expires_at).toLocaleDateString() 
+                        : '-'}
+                    </span>
                   </div>
                 </div>
 
@@ -137,12 +150,21 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                     <ShieldCheck size={20} className="text-green-500" />
                     <span>Personal Details</span>
                   </div>
-                  <div className="space-y-2 text-left">
-                    <div className="flex items-center gap-2 text-text-muted">
-                      <Mail size={16} />
-                      <span className="text-xs font-medium uppercase tracking-wider">Email</span>
+                  <div className="space-y-4 w-full">
+                    <div className="flex items-center justify-between gap-4 w-full">
+                      <div className="flex items-center gap-2 text-text-muted shrink-0">
+                        <UserIcon size={16} />
+                        <span className="text-xs font-medium uppercase tracking-wider">Name</span>
+                      </div>
+                      <div className="text-text-main font-semibold text-sm text-right">{fullName}</div>
                     </div>
-                    <div className="text-text-main break-all font-semibold">{user?.email}</div>
+                    <div className="flex items-center justify-between gap-4 w-full">
+                      <div className="flex items-center gap-2 text-text-muted shrink-0">
+                        <Mail size={16} />
+                        <span className="text-xs font-medium uppercase tracking-wider">Email</span>
+                      </div>
+                      <div className="text-text-main break-all font-semibold text-sm text-right">{user?.email}</div>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -14,7 +14,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
   return (
     <footer className="footer">
-      <div className="footer-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+      <div className="footer-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <div className="cursor-pointer" onClick={() => navigate('remove-audio')}>
           <div className="flex items-center gap-2 mb-6">
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-cyan-400 rounded-lg flex items-center justify-center">
@@ -38,13 +38,13 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <h5 className="footer-title">Support</h5>
           <button onClick={() => navigate('info:faq')} className="footer-link-btn">FAQ</button>
           <button onClick={() => navigate('contact')} className="footer-link-btn">Contact</button>
-          <button onClick={() => navigate('privacy')} className="footer-link-btn">Privacy</button>
-          <button onClick={() => navigate('terms')} className="footer-link-btn">Terms</button>
+          <a href="/privacy-policy.html" onClick={(e) => { e.preventDefault(); navigate('privacy'); }} className="footer-link-btn text-left">Privacy</a>
+          <a href="/terms-of-service.html" onClick={(e) => { e.preventDefault(); navigate('terms'); }} className="footer-link-btn text-left">Terms</a>
         </div>
         <div>
           <h5 className="footer-title">Legal</h5>
-          <button onClick={() => navigate('privacy')} className="footer-link-btn">Privacy Policy</button>
-          <button onClick={() => navigate('terms')} className="footer-link-btn">Terms of Service</button>
+          <a href="/privacy-policy.html" onClick={(e) => { e.preventDefault(); navigate('privacy'); }} className="footer-link-btn text-left">Privacy Policy</a>
+          <a href="/terms-of-service.html" onClick={(e) => { e.preventDefault(); navigate('terms'); }} className="footer-link-btn text-left">Terms of Service</a>
         </div>
       </div>
       <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-glass-border text-center text-xs text-text-muted">

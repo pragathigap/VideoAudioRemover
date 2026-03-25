@@ -7,10 +7,30 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-utils': ['framer-motion', 'lucide-react', 'canvas-confetti'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
   server: {
     headers: {
-      'Cross-Origin-Opener-Policy': 'same-origin',
-      'Cross-Origin-Embedder-Policy': 'credentialless',
+       'Cross-Origin-Opener-Policy': 'same-origin',
+       'Cross-Origin-Embedder-Policy': 'credentialless',
+       'Cross-Origin-Resource-Policy': 'cross-origin',
+    },
+  },
+  preview: {
+    headers: {
+       'Cross-Origin-Opener-Policy': 'same-origin',
+       'Cross-Origin-Embedder-Policy': 'credentialless',
+       'Cross-Origin-Resource-Policy': 'cross-origin',
     },
   },
 })
