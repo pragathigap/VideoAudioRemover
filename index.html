@@ -143,6 +143,7 @@
         t.crossOrigin = "anonymous";
         y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
       };
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
       if (window.requestIdleCallback) {
         window.requestIdleCallback(run);
       } else {

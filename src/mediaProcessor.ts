@@ -1,17 +1,21 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { fetchFile } from '@ffmpeg/util';
+import { toBlobURL, fetchFile } from '@ffmpeg/util';
 
-const baseURL = window.location.origin + '/ffmpeg';
+const mtBaseURL = 'https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/esm';
 let ffmpeg: FFmpeg | null = null;
 
 export const loadFFmpeg = async () => {
   if (ffmpeg) return ffmpeg;
   
   ffmpeg = new FFmpeg();
+  
+  // Use multi-threaded version for significantly faster processing
   await ffmpeg.load({
-    coreURL: `${baseURL}/ffmpeg-core.js`,
-    wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+    coreURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.js`, 'text/javascript'),
+    wasmURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+    workerURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.worker.js`, 'text/javascript'),
   });
+  
   return ffmpeg;
 };
 
@@ -20,7 +24,7 @@ export const muteVideo = async (
   onProgress: (p: number) => void
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }) => {
+  instance.on('progress', ({ progress }: { progress: number }) => {
     onProgress(Math.round(progress * 100));
   });
 
@@ -44,7 +48,7 @@ export const extractAudio = async (
   onProgress: (p: number) => void
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }) => {
+  instance.on('progress', ({ progress }: { progress: number }) => {
     onProgress(Math.round(progress * 100));
   });
 
@@ -70,13 +74,21 @@ export const compressVideo = async (
   preset: string = 'medium'
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }) => {
+  instance.on('progress', ({ progress }: { progress: number }) => {
     onProgress(Math.round(progress * 100));
   });
 
   try {
+    const threads = navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : '4';
     await instance.writeFile('input.mp4', await fetchFile(file));
-    await instance.exec(['-i', 'input.mp4', '-vcodec', 'libx264', '-crf', crf.toString(), '-preset', preset, 'output-compressed.mp4']);
+    await instance.exec([
+      '-i', 'input.mp4', 
+      '-vcodec', 'libx264', 
+      '-crf', crf.toString(), 
+      '-preset', preset, 
+      '-threads', threads,
+      'output-compressed.mp4'
+    ]);
     const data = await instance.readFile('output-compressed.mp4');
     const bytes = data instanceof Uint8Array ? new Uint8Array(data) : new Uint8Array(data as unknown as ArrayBuffer);
     return URL.createObjectURL(new Blob([bytes], { type: 'video/mp4' }));
@@ -97,7 +109,7 @@ export const resizeVideo = async (
   preset: string = 'medium'
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }) => {
+  instance.on('progress', ({ progress }: { progress: number }) => {
     onProgress(Math.round(progress * 100));
   });
 
@@ -122,7 +134,7 @@ export const addAudioToVideo = async (
   onProgress: (p: number) => void
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }) => {
+  instance.on('progress', ({ progress }: { progress: number }) => {
     onProgress(Math.round(progress * 100));
   });
 
