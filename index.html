@@ -17,7 +17,15 @@
   <link rel="preconnect" href="https://o.clarity.ms" crossorigin="use-credentials">
   <link rel="dns-prefetch" href="https://www.clarity.ms">
   <link rel="dns-prefetch" href="https://analytics.ahrefs.com">
+
+  <!-- Module Preload for faster initialization -->
+  <link rel="modulepreload" href="/src/main.tsx">
+  <link rel="modulepreload" href="/src/App.tsx">
+  <link rel="modulepreload" href="/src/pages/RemoveAudio.tsx">
   
+  <!-- Preload Critical Font -->
+  <link rel="preload" href="https://fonts.gstatic.com/s/outfit/v15/QGYyz_MVcBeNP4NjuGObqx1XmO1I4e6yC4E.ttf" as="font" type="font/ttf" crossorigin>
+
   <!-- Inline Fonts for Instant FCP/LCP -->
   <style>
     @font-face { font-family: 'Outfit'; font-style: normal; font-weight: 300; font-display: swap; src: url(https://fonts.gstatic.com/s/outfit/v15/QGYyz_MVcBeNP4NjuGObqx1XmO1I4W61C4E.ttf) format('truetype'); }
@@ -111,8 +119,27 @@
 
 <body>
   <div id="root">
-    <div style="display: flex; height: 100vh; align-items: center; justify-content: center; background: #ffffff;">
-      <div style="width: 40px; height: 40px; border: 3px solid #6366f1; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+    <!-- Static Skeleton for Instant LCP/FCP -->
+    <div style="min-height: 100vh; display: flex; flex-direction: column;">
+      <nav class="navbar" style="background: rgba(3, 10, 80, 0.98); height: 80px; display: flex; align-items: center; padding: 0 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.15); width: 100%;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="brand-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+              <rect width="20" height="20" x="2" y="2" rx="5" fill="white" fill-opacity="0.2" />
+              <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.934a.5.5 0 0 0-.777-.416L16 11z" fill="white" />
+              <rect width="14" height="12" x="2" y="6" rx="2" fill="white" />
+            </svg>
+          </div>
+          <span class="text-xl font-bold" style="color: white;">Remove Audio from Video</span>
+        </div>
+      </nav>
+      <main class="max-w-4xl mx-auto px-6" style="margin-top: 3rem; text-align: center; width: 100%;">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Remove <span class="gradient-text">Audio from Video</span></h1>
+        <p class="text-muted text-lg">Fast, browser-based tool to mute your videos. No uploads required.</p>
+        <div class="glass-effect" style="height: 300px; border-radius: 1.5rem; margin-top: 3rem; display: flex; align-items: center; justify-content: center; opacity: 0.5;">
+          <div style="width: 40px; height: 40px; border: 3px solid #6366f1; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+        </div>
+      </main>
     </div>
   </div>
   <style>

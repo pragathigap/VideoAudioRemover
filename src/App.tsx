@@ -1,23 +1,32 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Home from './pages/Home';
 import RemoveAudio from './pages/RemoveAudio';
-import ExtractMP3 from './pages/ExtractMP3';
-import VideoCompressor from './pages/VideoCompressor';
-import VideoResizer from './pages/VideoResizer';
-import Pricing from './pages/Pricing';
-import Info from './pages/Info.tsx';
-import Dashboard from './pages/Dashboard';
-import Login from './pages/Login.tsx';
-import Signup from './pages/Signup.tsx';
-import AddAudio from './pages/AddAudio';
-import Contact from './pages/Contact';
-import Privacy from './pages/Privacy';
-import Terms from './pages/Terms';
+
+// Lazy load non-critical pages for better performance
+const Home = lazy(() => import('./pages/Home'));
+const ExtractMP3 = lazy(() => import('./pages/ExtractMP3'));
+const VideoCompressor = lazy(() => import('./pages/VideoCompressor'));
+const VideoResizer = lazy(() => import('./pages/VideoResizer'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Info = lazy(() => import('./pages/Info.tsx'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Login = lazy(() => import('./pages/Login.tsx'));
+const Signup = lazy(() => import('./pages/Signup.tsx'));
+const AddAudio = lazy(() => import('./pages/AddAudio'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Terms = lazy(() => import('./pages/Terms'));
 
 import { supabase } from './lib/supabase';
 import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
+
+// Loading fallback
+const PageLoader = () => (
+  <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+    <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+  </div>
+);
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -115,7 +124,9 @@ const App: React.FC = () => {
       <Navbar onNavigate={handleNavigate} currentPage={currentPage} user={user} />
       
       <div className="flex-1">
-        {renderPage()}
+        <Suspense fallback={<PageLoader />}>
+          {renderPage()}
+        </Suspense>
       </div>
 
       <Footer onNavigate={handleNavigate} />

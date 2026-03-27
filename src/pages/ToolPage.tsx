@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Upload, Download, CheckCircle2, VolumeX, FileAudio, RefreshCw, X, Crown, Zap, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import confetti from 'canvas-confetti';
+// confetti will be loaded dynamically
 import { muteVideo, extractAudio, compressVideo, resizeVideo, addAudioToVideo } from '../mediaProcessor';
 import { supabase } from '../lib/supabase';
 import type { Session, User } from '@supabase/supabase-js';
@@ -488,11 +488,13 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
 
     link.download = `vid-audio-remix-${fileObj.file.name.split('.')[0]}.${ext}`;
     link.click();
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#6366f1', '#22d3ee', '#10b981']
+    import('canvas-confetti').then(confetti => {
+      confetti.default({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#6366f1', '#22d3ee', '#10b981']
+      });
     });
   };
 
