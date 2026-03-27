@@ -423,7 +423,7 @@ const Pricing: React.FC<PricingProps> = ({ onNavigate }) => {
             price="0"
             period="Personal use"
             buttonText="Get Started"
-            onClick={() => window.location.href = '/remove-audio'}
+            onClick={() => window.location.href = '/'}
             features={[
               "50MB Max File Size",
               "2 min Max Video Duration",

@@ -60,7 +60,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             <p className="text-text-muted mb-8">Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable dashboard.</p>
             <button
               type="button"
-              onClick={() => onNavigate('remove-audio')}
+              onClick={() => onNavigate('')}
               className="btn-primary justify-center py-3 px-8"
             >
               Back to Tools
@@ -180,7 +180,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 </button>
                 
                 <button 
-                  onClick={() => onNavigate('remove-audio')}
+                  onClick={() => onNavigate('')}
                   className="flex items-center gap-2 bg-white text-text-main border border-gray-200 hover:border-primary hover:text-primary px-8 py-3 rounded-xl font-bold transition-all shadow-sm active:scale-95"
                 >
                   Back to Tools

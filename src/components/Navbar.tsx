@@ -14,6 +14,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
 
   const active = useMemo(() => {
     if (currentPage === 'login') return 'auth';
+    if (currentPage === '') return 'remove-audio';
     return currentPage;
   }, [currentPage]);
 
@@ -30,7 +31,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
       <div className="flex-1 flex items-center justify-between w-full h-full relative">
         <div
           className="flex items-center gap-3 cursor-pointer min-w-0"
-          onClick={() => navigate('remove-audio')}
+          onClick={() => navigate('')}
         >
           <div className="brand-badge w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
             <VideoIcon className="text-white" size={24} />
@@ -48,7 +49,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           </button>
           <button
             type="button"
-            onClick={() => navigate('remove-audio')}
+            onClick={() => navigate('')}
             className={navItemClass(active === 'remove-audio')}
           >
             <span>Remove Audio</span>
@@ -117,7 +118,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
       {isMobileMenuOpen && (
         <div className="mobile-menu-overlay lg:hidden">
           <button onClick={() => navigate('pricing')} className={`${navItemClass(active === 'pricing')} w-full justify-start py-3 px-4`}>Pricing</button>
-          <button onClick={() => navigate('remove-audio')} className={`${navItemClass(active === 'remove-audio')} w-full justify-start py-3 px-4`}>Remove Audio</button>
+          <button onClick={() => navigate('')} className={`${navItemClass(active === 'remove-audio')} w-full justify-start py-3 px-4`}>Remove Audio</button>
           <button onClick={() => navigate('add-audio')} className={`${navItemClass(active === 'add-audio')} w-full justify-start py-3 px-4`}>Add Audio</button>
           <button onClick={() => navigate('extract-audio')} className={`${navItemClass(active === 'extract-audio')} w-full justify-start py-3 px-4`}>Extract Audio</button>
           <button onClick={() => navigate('compress-video')} className={`${navItemClass(active === 'compress-video')} w-full justify-start py-3 px-4`}>Compress Video</button>

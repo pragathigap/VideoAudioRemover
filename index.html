@@ -111,27 +111,13 @@
 
 <body>
   <div id="root">
-    <div class="min-h-screen flex flex-col">
-      <nav class="navbar glass-effect sticky top-0 z-50 px-6 flex items-center mb-8">
-        <div class="flex-1 flex items-center justify-between w-full h-full relative">
-          <div class="flex items-center gap-3 cursor-pointer min-w-0">
-            <div class="brand-badge w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.934a.5.5 0 0 0-.777-.416L16 11"></path><rect width="12" height="12" x="2" y="6" rx="2"></rect></svg>
-            </div>
-            <span class="text-xl font-bold gradient-text truncate">Remove Audio from Video</span>
-          </div>
-        </div>
-      </nav>
-      <div class="flex-1">
-        <main class="max-w-4xl mx-auto px-6">
-          <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Remove <span class="gradient-text">Audio from Video</span></h1>
-            <p class="text-muted text-lg">Fast, browser-based tool to mute your videos. No uploads required.</p>
-          </header>
-        </main>
-      </div>
+    <div style="display: flex; height: 100vh; align-items: center; justify-content: center; background: #ffffff;">
+      <div style="width: 40px; height: 40px; border: 3px solid #6366f1; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
     </div>
   </div>
+  <style>
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  </style>
   <script type="module" src="/src/main.tsx"></script>
 
   <!-- Non-critical analytics moved to bottom -->
@@ -143,7 +129,6 @@
         t.crossOrigin = "anonymous";
         y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
       };
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
       if (window.requestIdleCallback) {
         window.requestIdleCallback(run);
       } else {

@@ -1,42 +1,17 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { toBlobURL, fetchFile } from '@ffmpeg/util';
+import { fetchFile } from '@ffmpeg/util';
 
-const mtBaseURL = 'https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/esm';
+const baseURL = window.location.origin + '/ffmpeg';
 let ffmpeg: FFmpeg | null = null;
 
 export const loadFFmpeg = async () => {
   if (ffmpeg) return ffmpeg;
   
   ffmpeg = new FFmpeg();
-  
-  const canUseMT = typeof SharedArrayBuffer !== 'undefined' && window.crossOriginIsolated;
-  
-  if (canUseMT) {
-    try {
-      console.log('Loading Multi-threaded FFmpeg...');
-      // Try loading multi-threaded version from CDN for speed
-      await ffmpeg.load({
-        coreURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.js`, 'text/javascript'),
-        wasmURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-        workerURL: await toBlobURL(`${mtBaseURL}/ffmpeg-core.worker.js`, 'text/javascript'),
-      });
-      console.log('Multi-threaded FFmpeg loaded successfully');
-      return ffmpeg;
-    } catch (e) {
-      console.error('Failed to load MT version, falling back to ST:', e);
-      // Reset instance before fallback
-      ffmpeg = new FFmpeg();
-    }
-  }
-
-  console.log('Loading Single-threaded FFmpeg (Fallback)...');
-  // Fallback to local single-threaded version which is most compatible
-  const stBaseURL = window.location.origin + '/ffmpeg';
   await ffmpeg.load({
-    coreURL: `${stBaseURL}/ffmpeg-core.js`,
-    wasmURL: `${stBaseURL}/ffmpeg-core.wasm`,
+    coreURL: `${baseURL}/ffmpeg-core.js`,
+    wasmURL: `${baseURL}/ffmpeg-core.wasm`,
   });
-  console.log('Single-threaded FFmpeg loaded');
   return ffmpeg;
 };
 
@@ -45,14 +20,13 @@ export const muteVideo = async (
   onProgress: (p: number) => void
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }: { progress: number }) => {
+  instance.on('progress', ({ progress }) => {
     onProgress(Math.round(progress * 100));
   });
 
   try {
-    const threads = navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : '4';
     await instance.writeFile('input.mp4', await fetchFile(file));
-    await instance.exec(['-threads', threads, '-i', 'input.mp4', '-an', '-c:v', 'copy', 'output.mp4']);
+    await instance.exec(['-i', 'input.mp4', '-an', '-c:v', 'copy', 'output.mp4']);
     const data = await instance.readFile('output.mp4');
     const bytes = data instanceof Uint8Array ? new Uint8Array(data) : new Uint8Array(data as unknown as ArrayBuffer);
     return URL.createObjectURL(new Blob([bytes], { type: 'video/mp4' }));
@@ -70,14 +44,13 @@ export const extractAudio = async (
   onProgress: (p: number) => void
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }: { progress: number }) => {
+  instance.on('progress', ({ progress }) => {
     onProgress(Math.round(progress * 100));
   });
 
   try {
-    const threads = navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : '4';
     await instance.writeFile('input.mp4', await fetchFile(file));
-    await instance.exec(['-threads', threads, '-i', 'input.mp4', '-vn', '-acodec', 'libmp3lame', 'output.mp3']);
+    await instance.exec(['-i', 'input.mp4', '-vn', '-acodec', 'libmp3lame', 'output.mp3']);
     const data = await instance.readFile('output.mp3');
     const bytes = data instanceof Uint8Array ? new Uint8Array(data) : new Uint8Array(data as unknown as ArrayBuffer);
     return URL.createObjectURL(new Blob([bytes], { type: 'audio/mp3' }));
@@ -97,21 +70,13 @@ export const compressVideo = async (
   preset: string = 'medium'
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }: { progress: number }) => {
+  instance.on('progress', ({ progress }) => {
     onProgress(Math.round(progress * 100));
   });
 
   try {
-    const threads = navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : '4';
     await instance.writeFile('input.mp4', await fetchFile(file));
-    await instance.exec([
-      '-i', 'input.mp4', 
-      '-vcodec', 'libx264', 
-      '-crf', crf.toString(), 
-      '-preset', preset, 
-      '-threads', threads,
-      'output-compressed.mp4'
-    ]);
+    await instance.exec(['-i', 'input.mp4', '-vcodec', 'libx264', '-crf', crf.toString(), '-preset', preset, 'output-compressed.mp4']);
     const data = await instance.readFile('output-compressed.mp4');
     const bytes = data instanceof Uint8Array ? new Uint8Array(data) : new Uint8Array(data as unknown as ArrayBuffer);
     return URL.createObjectURL(new Blob([bytes], { type: 'video/mp4' }));
@@ -132,14 +97,13 @@ export const resizeVideo = async (
   preset: string = 'medium'
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }: { progress: number }) => {
+  instance.on('progress', ({ progress }) => {
     onProgress(Math.round(progress * 100));
   });
 
   try {
-    const threads = navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : '4';
     await instance.writeFile('input.mp4', await fetchFile(file));
-    await instance.exec(['-threads', threads, '-i', 'input.mp4', '-vf', `scale=${width}:${height}`, '-c:v', 'libx264', '-crf', '23', '-preset', preset, '-c:a', 'copy', 'output-resized.mp4']);
+    await instance.exec(['-i', 'input.mp4', '-vf', `scale=${width}:${height}`, '-c:v', 'libx264', '-crf', '23', '-preset', preset, '-c:a', 'copy', 'output-resized.mp4']);
     const data = await instance.readFile('output-resized.mp4');
     const bytes = data instanceof Uint8Array ? new Uint8Array(data) : new Uint8Array(data as unknown as ArrayBuffer);
     return URL.createObjectURL(new Blob([bytes], { type: 'video/mp4' }));
@@ -158,17 +122,17 @@ export const addAudioToVideo = async (
   onProgress: (p: number) => void
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }: { progress: number }) => {
+  instance.on('progress', ({ progress }) => {
     onProgress(Math.round(progress * 100));
   });
 
   try {
-    const threads = navigator.hardwareConcurrency ? navigator.hardwareConcurrency.toString() : '4';
     await instance.writeFile('video.mp4', await fetchFile(videoFile));
     await instance.writeFile('audio.mp3', await fetchFile(audioFile));
     
+    // -i video -i audio -c:v copy -map 0:v:0 -map 1:a:0 -shortest
+    // This replaces existing audio with new audio, and cuts to the shortest stream
     await instance.exec([
-      '-threads', threads,
       '-i', 'video.mp4', 
       '-i', 'audio.mp3', 
       '-c:v', 'copy', 

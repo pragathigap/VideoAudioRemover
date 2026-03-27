@@ -24,19 +24,21 @@ const App: React.FC = () => {
   // Use lowercase for cleaner URLs
   const [currentPage, setCurrentPage] = useState(() => {
     const path = window.location.pathname.substring(1);
-    return path || 'remove-audio';
+    // If path is empty or 'remove-audio', default to root ''
+    return (path === '' || path === 'remove-audio') ? '' : path;
   });
 
   const handleNavigate = useCallback((page: string) => {
     setCurrentPage(page);
-    window.history.pushState({}, '', `/${page}`);
+    // If page is empty string, push root path '/'
+    window.history.pushState({}, '', page === '' ? '/' : `/${page}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   React.useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname.substring(1);
-      setCurrentPage(path || 'remove-audio');
+      setCurrentPage((path === '' || path === 'remove-audio') ? '' : path);
     };
     window.addEventListener('popstate', handlePopState);
 
@@ -74,12 +76,13 @@ const App: React.FC = () => {
     }
 
     switch (currentPage) {
+      case '':
+      case 'remove-audio':
+        return <RemoveAudio />;
       case 'home':
         return <Home />;
       case 'tools':
         return <Home />;
-      case 'remove-audio':
-        return <RemoveAudio />;
       case 'extract-audio':
         return <ExtractMP3 />;
       case 'compress-video':
