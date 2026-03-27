@@ -145,9 +145,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
       setCurrentUser(user);
       const isUserPremium = !!user?.user_metadata?.is_premium;
       setIsPremium(isUserPremium);
-      if (isUserPremium && processingSpeed === 'medium') {
-        setProcessingSpeed('fast');
-      }
+      setProcessingSpeed((prev) => (isUserPremium && prev === 'medium' ? 'fast' : prev));
     };
 
     if (!supabase) {
@@ -272,7 +270,6 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
             const video = document.createElement('video');
             video.preload = 'metadata';
             video.onloadedmetadata = () => {
-              window.URL.revokeObjectURL(video.src);
               resolve(video.duration);
             };
             video.src = preview;

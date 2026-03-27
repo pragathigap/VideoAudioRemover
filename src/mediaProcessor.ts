@@ -2,16 +2,29 @@ import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
 
 const baseURL = window.location.origin + '/ffmpeg';
+const CDN_URL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
 let ffmpeg: FFmpeg | null = null;
 
 export const loadFFmpeg = async () => {
   if (ffmpeg) return ffmpeg;
   
   ffmpeg = new FFmpeg();
-  await ffmpeg.load({
-    coreURL: `${baseURL}/ffmpeg-core.js`,
-    wasmURL: `${baseURL}/ffmpeg-core.wasm`,
-  });
+  
+  try {
+    // Try local hosting first (best for privacy and speed)
+    await ffmpeg.load({
+      coreURL: `${baseURL}/ffmpeg-core.js`,
+      wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+    });
+  } catch (e) {
+    console.error('Failed to load local FFmpeg core, falling back to CDN...', e);
+    // Fallback to CDN if local loading fails (common in strictly configured hosts)
+    await ffmpeg.load({
+      coreURL: `${CDN_URL}/ffmpeg-core.js`,
+      wasmURL: `${CDN_URL}/ffmpeg-core.wasm`,
+    });
+  }
+  
   return ffmpeg;
 };
 

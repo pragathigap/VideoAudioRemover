@@ -70,6 +70,9 @@ const Signup: React.FC<SignupProps> = ({ onNavigate }) => {
     try {
       const { error: googleError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
+        options: {
+          redirectTo: window.location.origin.replace(/\/$/, '')
+        }
       });
       if (googleError) throw googleError;
     } catch (err: unknown) {

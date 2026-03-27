@@ -1,9 +1,9 @@
-import React, { useCallback, useState, lazy, Suspense } from 'react';
+import React, { useCallback, useState, Suspense, lazy } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import RemoveAudio from './pages/RemoveAudio';
 
-// Lazy load non-critical pages for better performance
+// Route-based code splitting
+const RemoveAudio = lazy(() => import('./pages/RemoveAudio'));
 const Home = lazy(() => import('./pages/Home'));
 const ExtractMP3 = lazy(() => import('./pages/ExtractMP3'));
 const VideoCompressor = lazy(() => import('./pages/VideoCompressor'));
@@ -20,13 +20,6 @@ const Terms = lazy(() => import('./pages/Terms'));
 
 import { supabase } from './lib/supabase';
 import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
-
-// Loading fallback
-const PageLoader = () => (
-  <div className="flex-1 flex items-center justify-center min-h-[60vh]">
-    <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-  </div>
-);
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -76,47 +69,51 @@ const App: React.FC = () => {
   }, [handleNavigate]);
 
   const renderPage = () => {
-    if (currentPage.startsWith('info:')) {
-      const section = currentPage.split(':')[1];
-      if (section === 'about') return <Info section="about" onNavigate={handleNavigate} />;
-      if (section === 'faq') return <Info section="faq" onNavigate={handleNavigate} />;
-      // Mapping old info links to new dedicated pages
-      if (section === 'contact') return <Contact />;
-    }
+    return (
+      <Suspense fallback={null}>
+        {(() => {
+          if (currentPage.startsWith('info:')) {
+            const section = currentPage.split(':')[1];
+            if (section === 'about') return <Info section="about" onNavigate={handleNavigate} />;
+            if (section === 'faq') return <Info section="faq" onNavigate={handleNavigate} />;
+            if (section === 'contact') return <Contact />;
+          }
 
-    switch (currentPage) {
-      case '':
-      case 'remove-audio':
-        return <RemoveAudio />;
-      case 'home':
-        return <Home />;
-      case 'tools':
-        return <Home />;
-      case 'extract-audio':
-        return <ExtractMP3 />;
-      case 'compress-video':
-        return <VideoCompressor />;
-      case 'resizer':
-        return <VideoResizer />;
-      case 'add-audio':
-        return <AddAudio />;
-      case 'pricing':
-        return <Pricing onNavigate={handleNavigate} />;
-      case 'login':
-        return <Login onNavigate={handleNavigate} />;
-      case 'signup':
-        return <Signup onNavigate={handleNavigate} />;
-      case 'dashboard':
-        return <Dashboard onNavigate={handleNavigate} />;
-      case 'contact':
-        return <Contact />;
-      case 'privacy':
-        return <Privacy />;
-      case 'terms':
-        return <Terms />;
-      default:
-        return <Home />;
-    }
+          switch (currentPage) {
+            case '':
+            case 'remove-audio':
+              return <RemoveAudio />;
+            case 'home':
+            case 'tools':
+              return <Home />;
+            case 'extract-audio':
+              return <ExtractMP3 />;
+            case 'compress-video':
+              return <VideoCompressor />;
+            case 'resizer':
+              return <VideoResizer />;
+            case 'add-audio':
+              return <AddAudio />;
+            case 'pricing':
+              return <Pricing onNavigate={handleNavigate} />;
+            case 'login':
+              return <Login onNavigate={handleNavigate} />;
+            case 'signup':
+              return <Signup onNavigate={handleNavigate} />;
+            case 'dashboard':
+              return <Dashboard onNavigate={handleNavigate} />;
+            case 'contact':
+              return <Contact />;
+            case 'privacy':
+              return <Privacy />;
+            case 'terms':
+              return <Terms />;
+            default:
+              return <Home />;
+          }
+        })()}
+      </Suspense>
+    );
   };
 
   return (
@@ -124,9 +121,7 @@ const App: React.FC = () => {
       <Navbar onNavigate={handleNavigate} currentPage={currentPage} user={user} />
       
       <div className="flex-1">
-        <Suspense fallback={<PageLoader />}>
-          {renderPage()}
-        </Suspense>
+        {renderPage()}
       </div>
 
       <Footer onNavigate={handleNavigate} />
