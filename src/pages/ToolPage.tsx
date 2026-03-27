@@ -1,5 +1,14 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Upload, Download, CheckCircle2, VolumeX, FileAudio, RefreshCw, X, Crown, Zap, Sparkles } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState, Suspense, lazy } from 'react';
+import { 
+  Upload, 
+  Download, 
+  VolumeX, 
+  FileAudio, 
+  RefreshCw, 
+  X, 
+  Crown, 
+  Zap 
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 // confetti will be loaded dynamically
 import { muteVideo, extractAudio, compressVideo, resizeVideo, addAudioToVideo } from '../mediaProcessor';
@@ -26,53 +35,7 @@ interface MediaFile {
   status: 'idle' | 'processing' | 'done' | 'error';
 }
 
-const toolContentMap: Record<string, { title: string, subtitle: string, items: { q: string, a: string }[] }> = {
-  'mute': {
-    title: "Why Remove Audio?",
-    subtitle: "The fastest way to mute videos directly in your browser.",
-    items: [
-      { q: "Perfect for Social Media", a: "Mute original audio before adding trending sounds on platforms like TikTok and Instagram Reels." },
-      { q: "Clean B-Roll", a: "Remove distracting background noise, wind, or chatter from your footage before editing." },
-      { q: "Zero Quality Loss", a: "We strip the audio track without re-encoding the video stream, preserving 100% of the original video quality." }
-    ]
-  },
-  'extract': {
-    title: "Why Extract MP3?",
-    subtitle: "Turn any video into a high-quality audio file instantly.",
-    items: [
-      { q: "Podcasts & Interviews", a: "Easily convert video podcasts or long-form interviews into MP3s for listening on the go." },
-      { q: "Save Background Music", a: "Extract that perfect background track or sound bite from a recorded clip." },
-      { q: "High Quality Audio", a: "We extract the audio directly with high-fidelity encoding, ensuring crisp sound." }
-    ]
-  },
-  'compress-video': {
-    title: "Why Compress Video?",
-    subtitle: "Reduce file sizes drastically without sacrificing visual quality.",
-    items: [
-      { q: "Discord & Email Ready", a: "Shrink massive video files to bypass attachment limits on messaging apps and email." },
-      { q: "Faster Uploads", a: "Smaller files mean lightning-fast uploads to YouTube, Instagram, and web forms." },
-      { q: "Smart FFmpeg Engine", a: "We use advanced CRF compression to significantly drop file size while keeping the video looking crisp." }
-    ]
-  },
-  'resize-video': {
-    title: "Why Resize Video?",
-    subtitle: "Perfectly frame and scale your videos for any platform.",
-    items: [
-      { q: "Social Media Formats", a: "Instantly crop and resize to 9:16 for TikTok/Shorts or 1:1 for Instagram feeds." },
-      { q: "Fix Resolution", a: "Lower 4K footage down to standard 1080p or 720p for easier sharing and editing performance." },
-      { q: "Black Bar Prevention", a: "Our tools intelligently fit or crop video dimensions to avoid ugly black bars." }
-    ]
-  },
-  'add-audio': {
-    title: "Why Add Audio?",
-    subtitle: "Replace or overlay new audio tracks onto your videos.",
-    items: [
-      { q: "Background Music", a: "Easily attach a background music track to your silent or muted video clips." },
-      { q: "Voiceovers & Dubs", a: "Sync a newly recorded voiceover file directly to your existing video footage." },
-      { q: "Instant Merging", a: "Our web-based engine multiplexes the video and audio files locally in seconds." }
-    ]
-  }
-};
+const ToolDisplay = lazy(() => import('../components/ToolDisplay'));
 
 const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
@@ -789,55 +752,9 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
         )}
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
-        {[
-          { title: 'Browser-Based', description: 'Faster processing without server uploads. Your data stays on your machine.', icon: CheckCircle2 },
-          { title: 'Privacy First', description: 'Zero tracking. Zero uploads. Zero compromises on your data privacy.', icon: CheckCircle2 },
-          { title: 'Pro Grade FFmpeg', description: 'Powered by industry-standard FFmpeg for pixel-perfect results.', icon: CheckCircle2 }
-        ].map((feature, i) => (
-          <div key={i} className="glass-effect p-6 rounded-2xl">
-            <feature.icon className="text-primary mb-4" size={24} />
-            <h4 className="font-bold mb-2">{feature.title}</h4>
-            <p className="text-sm text-text-muted">{feature.description}</p>
-          </div>
-        ))}
-      </section>
-
-      {toolContentMap[mode] && (
-        <section className="mt-32 mb-40">
-          <header className="mb-12 text-center">
-            <motion.h2
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="text-3xl font-bold mb-3"
-            >
-              {toolContentMap[mode].title.split(" ").slice(0, -1).join(" ")} <span className="gradient-text">{toolContentMap[mode].title.split(" ").slice(-1)}</span>
-            </motion.h2>
-            <p className="text-text-muted max-w-lg mx-auto">{toolContentMap[mode].subtitle}</p>
-          </header>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {toolContentMap[mode].items.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="glass-effect p-8 rounded-2xl flex flex-col items-start border border-white/5"
-              >
-                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
-                  <Sparkles className="text-primary" size={20} />
-                </div>
-                <h3 className="font-bold text-lg text-text-main mb-3">{item.q}</h3>
-                <p className="text-sm text-text-muted leading-relaxed">{item.a}</p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-      )}
+      <Suspense fallback={<div className="h-40" />}>
+        <ToolDisplay mode={mode} />
+      </Suspense>
 
 
 

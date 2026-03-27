@@ -35,7 +35,8 @@
   
   <!-- Preload Critical Local Font -->
   <link rel="preload" href="/fonts/outfit-v15-latin-600.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/outfit-v15-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Preload Critical Local Font -->
+  <link rel="preload" href="/fonts/outfit-v15-latin-700.woff2" as="font" type="font/woff2" crossorigin>
 
   <!-- Inline Fonts for Instant FCP/LCP -->
   <style>
@@ -158,23 +159,28 @@
   </style>
   <script type="module" src="/src/main.tsx"></script>
 
-  <!-- Non-critical analytics moved to bottom -->
+  <!-- Non-critical analytics moved to bottom with delay -->
   <script type="text/javascript">
-    (function (c, l, a, r, i, t, y) {
-      const run = function() {
-        c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-        t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
-        t.crossOrigin = "anonymous";
-        y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-      };
-      if (window.requestIdleCallback) {
-        window.requestIdleCallback(run);
-      } else {
-        setTimeout(run, 3000);
-      }
-    })(window, document, "clarity", "script", "vxjylppvve");
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        // Clarity
+        (function (c, l, a, r, i, t, y) {
+          c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+          t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+          t.crossOrigin = "anonymous";
+          y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", "vxjylppvve");
+
+        // Ahrefs
+        var s = document.createElement('script');
+        s.src = "https://analytics.ahrefs.com/analytics.js";
+        s.setAttribute('data-key', "2MsDFNVbqmVMKyvIj3Hshw");
+        s.async = true;
+        s.defer = true;
+        document.body.appendChild(s);
+      }, 3000);
+    });
   </script>
-  <script src="https://analytics.ahrefs.com/analytics.js" data-key="2MsDFNVbqmVMKyvIj3Hshw" crossorigin="anonymous" async defer></script>
 </body>
 
 </html>
