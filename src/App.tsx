@@ -46,10 +46,14 @@ const App: React.FC = () => {
 
     const subscription = supabase
       ? supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+          console.log('Auth Event:', event, 'User:', session?.user?.email);
           setUser(session?.user ?? null);
-          if (event === 'SIGNED_IN') {
+          
+          if (event === 'SIGNED_IN' || (event === 'INITIAL_SESSION' && session)) {
             const path = window.location.pathname.substring(1);
-            if (path === 'login' || path === 'signup') {
+            // If we are on login, signup, or home with a code/session, go to dashboard
+            if (path === 'login' || path === 'signup' || (path === '' && window.location.search.includes('code='))) {
+              console.log('Redirecting to dashboard...');
               handleNavigate('dashboard');
             }
           }
@@ -58,6 +62,7 @@ const App: React.FC = () => {
 
     if (supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
+        console.log('Initial Session:', session?.user?.email);
         setUser(session?.user ?? null);
       });
     }
