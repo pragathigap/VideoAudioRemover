@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LogOut, Crown, Mail, ShieldCheck, User as UserIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -24,14 +24,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, user }) => {
     await supabase.auth.signOut();
     onNavigate('login');
   };
-
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-bg-dark">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   if (!supabase) {
     return (
