@@ -89,6 +89,13 @@ const App: React.FC = () => {
     };
   }, [handleNavigate]);
 
+  // Auth Guard: Redirect logged-in users away from auth pages
+  React.useEffect(() => {
+    if (user && (currentPage === 'login' || currentPage === 'signup')) {
+      handleNavigate('dashboard');
+    }
+  }, [user, currentPage, handleNavigate]);
+
   const renderPage = () => {
     if (isLoading) {
       return (
