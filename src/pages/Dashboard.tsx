@@ -6,28 +6,15 @@ import type { User } from '@supabase/supabase-js';
 
 interface DashboardProps {
   onNavigate: (page: string) => void;
+  user: User | null;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+const Dashboard: React.FC<DashboardProps> = ({ onNavigate, user }) => {
   useEffect(() => {
-    const getUser = async () => {
-      if (!supabase) {
-        setLoading(false);
-        return;
-      }
-
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        onNavigate('login');
-      } else {
-        setUser(user);
-      }
-      setLoading(false);
-    };
-    getUser();
-  }, [onNavigate]);
+    if (!user) {
+      onNavigate('login');
+    }
+  }, [user, onNavigate]);
 
   const handleLogout = async () => {
     if (!supabase) {
