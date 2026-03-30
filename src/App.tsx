@@ -45,16 +45,26 @@ const App: React.FC = () => {
     };
     window.addEventListener('popstate', handlePopState);
 
+    // If there is a code in the URL, we know an auth exchange is happening
+    const hasCode = window.location.search.includes('code=');
+    if (hasCode) {
+      console.log('Auth code detected in URL, waiting for exchange...');
+      setIsLoading(true);
+    }
+
     const subscription = supabase
       ? supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
           console.log('Auth Event:', event, 'User:', session?.user?.email);
           setUser(session?.user ?? null);
-          setIsLoading(false);
+          
+          // Only stop loading if we have resolved the initial state or a code was exchanged
+          if (event !== 'INITIAL_SESSION' || !hasCode) {
+            setIsLoading(false);
+          }
           
           if (event === 'SIGNED_IN' || (event === 'INITIAL_SESSION' && session)) {
             const path = window.location.pathname.substring(1);
-            // If we are on login, signup, or home with a code/session, go to dashboard
-            if (path === 'login' || path === 'signup' || (path === '' && window.location.search.includes('code='))) {
+            if (path === 'login' || path === 'signup' || (path === '' && hasCode)) {
               console.log('Redirecting to dashboard...');
               handleNavigate('dashboard');
             }
@@ -63,10 +73,13 @@ const App: React.FC = () => {
       : null;
 
     if (supabase) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        console.log('Initial Session:', session?.user?.email);
+      supabase.auth.getSession().then(({ data: { session }, error }) => {
+        if (error) console.error('Session error:', error);
+        console.log('Initial Session Fetch:', session?.user?.email);
         setUser(session?.user ?? null);
-        setIsLoading(false);
+        if (!hasCode) {
+          setIsLoading(false);
+        }
       });
     }
 
