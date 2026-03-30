@@ -136,7 +136,7 @@ const App: React.FC = () => {
             case 'signup':
               return <Signup onNavigate={handleNavigate} />;
             case 'dashboard':
-              return <Dashboard onNavigate={handleNavigate} user={user} />;
+              return <Dashboard onNavigate={handleNavigate} user={user} isLoading={isLoading} />;
             case 'contact':
               return <Contact />;
             case 'privacy':

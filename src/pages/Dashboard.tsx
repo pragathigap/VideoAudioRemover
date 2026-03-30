@@ -7,14 +7,17 @@ import type { User } from '@supabase/supabase-js';
 interface DashboardProps {
   onNavigate: (page: string) => void;
   user: User | null;
+  isLoading: boolean;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ onNavigate, user }) => {
+const Dashboard: React.FC<DashboardProps> = ({ onNavigate, user, isLoading }) => {
   useEffect(() => {
-    if (!user) {
+    // ONLY redirect if we are 100% sure the user is not logged in after loading
+    if (!isLoading && !user) {
+      console.log('No user detected after loading, redirecting to login...');
       onNavigate('login');
     }
-  }, [user, onNavigate]);
+  }, [user, isLoading, onNavigate]);
 
   const handleLogout = async () => {
     if (!supabase) {
