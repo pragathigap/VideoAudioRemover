@@ -23,6 +23,7 @@ import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   // Use lowercase for cleaner URLs
   const [currentPage, setCurrentPage] = useState(() => {
     const path = window.location.pathname.substring(1);
@@ -48,6 +49,7 @@ const App: React.FC = () => {
       ? supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
           console.log('Auth Event:', event, 'User:', session?.user?.email);
           setUser(session?.user ?? null);
+          setIsLoading(false);
           
           if (event === 'SIGNED_IN' || (event === 'INITIAL_SESSION' && session)) {
             const path = window.location.pathname.substring(1);
@@ -64,6 +66,7 @@ const App: React.FC = () => {
       supabase.auth.getSession().then(({ data: { session } }) => {
         console.log('Initial Session:', session?.user?.email);
         setUser(session?.user ?? null);
+        setIsLoading(false);
       });
     }
 
@@ -74,6 +77,13 @@ const App: React.FC = () => {
   }, [handleNavigate]);
 
   const renderPage = () => {
+    if (isLoading) {
+      return (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      );
+    }
     return (
       <Suspense fallback={null}>
         {(() => {
