@@ -55,10 +55,10 @@ export default defineConfig({
         comments: false,
       },
     },
-    cssMinify: 'lightningcss',
+    cssMinify: true,
     cssCodeSplit: true,
     assetsInlineLimit: 4096,
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 1000,
   },
   server: {
     headers: {
