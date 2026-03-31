@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vidaudrem-v1';
+const CACHE_NAME = 'vidaudrem-v2'; // Version bump for immediate update
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -15,6 +15,7 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+  // Clear old caches
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -29,27 +30,23 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Performance: Cache-First for static assets and HTML
+  // Strategy: Stale-While-Revalidate for all local assets and navigation
   if (
     request.mode === 'navigate' ||
-    url.origin === self.location.origin && (
-      url.pathname.startsWith('/assets/') ||
-      url.pathname.startsWith('/fonts/') ||
-      url.pathname === '/logo.svg'
-    )
+    url.origin === self.location.origin
   ) {
     event.respondWith(
-      caches.match(request).then((response) => {
-        // Return from cache instantly (<5ms)
-        if (response) return response;
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(request).then((cachedResponse) => {
+          const fetchPromise = fetch(request).then((networkResponse) => {
+            if (networkResponse.status === 200) {
+              cache.put(request, networkResponse.clone());
+            }
+            return networkResponse;
+          }).catch(() => cachedResponse); // Fallback to cache on network failure
 
-        // Otherwise fetch and cache for next time
-        return fetch(request).then((networkResponse) => {
-          if (networkResponse.status === 200) {
-            const cacheCopy = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, cacheCopy));
-          }
-          return networkResponse;
+          // Return cached response instantly (<0.2s) if available, otherwise wait for network
+          return cachedResponse || fetchPromise;
         });
       })
     );
