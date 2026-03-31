@@ -163,34 +163,7 @@
   <style>
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
-  <!-- Ultimate Zero-JS Bootloader -->
-  <script type="module">
-    (function() {
-      const isBot = /Lighthouse|Googlebot|bingbot|baiduspider|yandex|Slurp|duckduckgo|ia_archiver/i.test(navigator.userAgent);
-      if (isBot) return;
-
-      let started = false;
-      const start = () => {
-        if (started) return;
-        started = true;
-        // Clean up listeners
-        ['mousemove', 'scroll', 'touchstart', 'keydown', 'click'].forEach(e => window.removeEventListener(e, start));
-        
-        // Append entry point dynamically to prevent premature dependency discovery
-        const s = document.createElement('script');
-        s.type = 'module';
-        s.src = '/src/main.tsx';
-        document.body.appendChild(s);
-      };
-
-      ['mousemove', 'scroll', 'touchstart', 'keydown', 'click'].forEach(event => {
-        window.addEventListener(event, start, { passive: true, once: true });
-      });
-
-      // 10s fallback for real users who stay idle
-      setTimeout(start, 10000);
-    })();
-  </script>
+  <script type="module" src="/src/main.tsx"></script>
 
   <!-- Non-critical analytics moved to bottom with delay -->
   <script type="text/javascript">

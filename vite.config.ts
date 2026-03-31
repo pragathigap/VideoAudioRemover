@@ -17,10 +17,6 @@ export default defineConfig({
       },
     },
     rollupOptions: {
-      input: {
-        main: './index.html',
-        app: './src/main.tsx'
-      },
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
