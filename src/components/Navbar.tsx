@@ -1,6 +1,16 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { Video as VideoIcon, Menu, X } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
+
+// Inline Icons for zero-unused JS
+const VideoIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.934a.5.5 0 0 0-.777-.416L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+);
+const MenuIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+);
+const XIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+);
 
 interface NavbarProps {
   onNavigate: (page: string) => void;
@@ -39,7 +49,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           onKeyDown={(e) => e.key === 'Enter' && navigate('')}
         >
           <div className="brand-badge w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
-            <VideoIcon className="text-white" size={24} aria-hidden="true" />
+            <VideoIcon />
           </div>
           <span className="text-xl font-bold gradient-text truncate">Remove Audio from Video</span>
         </div>
@@ -129,7 +139,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileMenuOpen}
           >
-            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            {isMobileMenuOpen ? <XIcon /> : <MenuIcon />}
           </button>
         </div>
       </div>

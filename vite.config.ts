@@ -10,27 +10,25 @@ export default defineConfig({
   build: {
     modulePreload: {
       polyfill: true,
+      resolveDependencies: (_url, deps) => {
+        return deps.filter(dep => 
+          !dep.includes('vendor-supabase') && 
+          !dep.includes('vendor-framer') && 
+          !dep.includes('vendor-icons') &&
+          !dep.includes('vendor-effects')
+        );
+      },
     },
     rollupOptions: {
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            if (id.includes('@supabase')) {
-              return 'vendor-supabase';
-            }
-            if (id.includes('framer-motion')) {
-              return 'vendor-framer';
-            }
-            if (id.includes('lucide-react')) {
-              return 'vendor-icons';
-            }
-            if (id.includes('canvas-confetti')) {
-              return 'vendor-effects';
-            }
-            return 'vendor'; // all other node_modules
+            if (id.includes('react') || id.includes('react-dom')) return 'vendor-react';
+            if (id.includes('@supabase')) return 'vendor-supabase';
+            if (id.includes('framer-motion')) return 'vendor-framer';
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('canvas-confetti')) return 'vendor-effects';
+            return 'vendor';
           }
         },
       },
