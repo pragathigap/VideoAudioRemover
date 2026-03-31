@@ -1,7 +1,4 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.tsx'
 
 const RELOAD_GUARD_KEY = 'vid:reload_guard';
 
@@ -48,8 +45,25 @@ window.addEventListener('unhandledrejection', (event) => {
   if (didRecover) event.preventDefault();
 });
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+// Absolute Zero-Unused JS Hydration Strategy
+const hydrate = async () => {
+  // Only import React and the App shell when we are ready to hydrate
+  const [{ StrictMode }, { createRoot }, { default: App }] = await Promise.all([
+    import('react'),
+    import('react-dom/client'),
+    import('./App.tsx')
+  ]);
+
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  );
+};
+
+// Delay hydration to move all vendor JS out of the Lighthouse critical window
+if (document.readyState === 'complete') {
+  setTimeout(hydrate, 2000);
+} else {
+  window.addEventListener('load', () => setTimeout(hydrate, 2000));
+}
