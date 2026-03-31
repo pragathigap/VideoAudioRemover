@@ -1,12 +1,17 @@
-import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { fetchFile } from '@ffmpeg/util';
+// Dynamic imports for FFmpeg to achieve zero-unused JS on initial load
+let ffmpeg: any | null = null;
+let fetchFile: any | null = null;
 
 const baseURL = window.location.origin + '/ffmpeg';
 const CDN_URL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
-let ffmpeg: FFmpeg | null = null;
 
 export const loadFFmpeg = async () => {
   if (ffmpeg) return ffmpeg;
+  
+  // Lazy load the factory and utility
+  const { FFmpeg } = await import('@ffmpeg/ffmpeg');
+  const { fetchFile: fetcher } = await import('@ffmpeg/util');
+  fetchFile = fetcher;
   
   ffmpeg = new FFmpeg();
   
@@ -18,7 +23,6 @@ export const loadFFmpeg = async () => {
     });
   } catch (e) {
     console.error('Failed to load local FFmpeg core, falling back to CDN...', e);
-    // Fallback to CDN if local loading fails (common in strictly configured hosts)
     await ffmpeg.load({
       coreURL: `${CDN_URL}/ffmpeg-core.js`,
       wasmURL: `${CDN_URL}/ffmpeg-core.wasm`,
@@ -33,7 +37,7 @@ export const muteVideo = async (
   onProgress: (p: number) => void
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }) => {
+  instance.on('progress', ({ progress }: { progress: number }) => {
     onProgress(Math.round(progress * 100));
   });
 
@@ -57,7 +61,7 @@ export const extractAudio = async (
   onProgress: (p: number) => void
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }) => {
+  instance.on('progress', ({ progress }: { progress: number }) => {
     onProgress(Math.round(progress * 100));
   });
 
@@ -83,7 +87,7 @@ export const compressVideo = async (
   preset: string = 'medium'
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }) => {
+  instance.on('progress', ({ progress }: { progress: number }) => {
     onProgress(Math.round(progress * 100));
   });
 
@@ -110,7 +114,7 @@ export const resizeVideo = async (
   preset: string = 'medium'
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }) => {
+  instance.on('progress', ({ progress }: { progress: number }) => {
     onProgress(Math.round(progress * 100));
   });
 

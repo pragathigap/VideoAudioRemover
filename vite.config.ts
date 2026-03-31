@@ -11,12 +11,8 @@ export default defineConfig({
     modulePreload: {
       polyfill: true,
       resolveDependencies: (_url, deps) => {
-        return deps.filter(dep => 
-          !dep.includes('vendor-supabase') && 
-          !dep.includes('vendor-framer') && 
-          !dep.includes('vendor-icons') &&
-          !dep.includes('vendor-effects')
-        );
+        // Drastically reduce initial unused JS by filtering ALL vendor/heavy chunks from preload
+        return deps.filter(dep => !dep.includes('vendor-'));
       },
     },
     rollupOptions: {
