@@ -212,11 +212,11 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
 
       for (const file of selectedFiles) {
         // Validation logic
-        const isMp4 = file.name.toLowerCase().endsWith('.mp4');
+        const isSupported = file.name.toLowerCase().endsWith('.mp4') || file.name.toLowerCase().endsWith('.mov');
         const maxSize = isPremium ? PAID_FILE_SIZE_LIMIT : FREE_FILE_SIZE_LIMIT;
 
-        if (!isPremium && !isMp4) {
-          setFfmpegError(`Free tier supports MP4 only. Please upgrade for ${file.name.split('.').pop()?.toUpperCase()} support.`);
+        if (!isPremium && !isSupported) {
+          setFfmpegError(`Free tier supports MP4 and MOV only. Please upgrade for ${file.name.split('.').pop()?.toUpperCase()} support.`);
           continue;
         }
 
@@ -509,7 +509,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
             <Upload className="text-primary" size={32} aria-hidden="true" />
           </div>
           <h3 className="text-xl font-semibold mb-2">Select Videos</h3>
-          <p className="text-text-muted">Drag & drop MP4 files here {!isPremium && '(Max 50MB)'}</p>
+          <p className="text-text-muted">Drag & drop MP4 or MOV files here {!isPremium && '(Max 50MB)'}</p>
         </div>
 
         {mediaFiles.length > 0 && (
