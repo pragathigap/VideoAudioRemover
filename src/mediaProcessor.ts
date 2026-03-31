@@ -139,7 +139,7 @@ export const addAudioToVideo = async (
   onProgress: (p: number) => void
 ): Promise<string> => {
   const instance = await loadFFmpeg();
-  instance.on('progress', ({ progress }) => {
+  instance.on('progress', ({ progress }: { progress: number }) => {
     onProgress(Math.round(progress * 100));
   });
 
