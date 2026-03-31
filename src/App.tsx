@@ -19,7 +19,12 @@ const Contact = lazy(() => import('./pages/Contact'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
 
-import { supabase } from './lib/supabase';
+// Deferred Supabase import
+const getSupabase = async () => {
+  const { supabase } = await import('./lib/supabase');
+  return supabase;
+};
+
 import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 
 const App: React.FC = () => {
@@ -40,49 +45,52 @@ const App: React.FC = () => {
   }, []);
 
   React.useEffect(() => {
+    let subscription: { unsubscribe: () => void } | null = null;
+    
+    const initAuth = async () => {
+      const supabase = await getSupabase();
+      if (!supabase) {
+        setIsLoading(false);
+        return;
+      }
+
+      const { data } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+        console.log('Auth Event:', event, 'User:', session?.user?.email);
+        setUser(session?.user ?? null);
+        
+        if (event !== 'INITIAL_SESSION' || !hasCode) {
+          setIsLoading(false);
+        }
+        
+        if (event === 'SIGNED_IN' || (event === 'INITIAL_SESSION' && session)) {
+          const path = window.location.pathname.substring(1);
+          if (path === 'login' || path === 'signup' || (path === '' && hasCode)) {
+            handleNavigate('dashboard');
+          }
+        }
+      });
+      subscription = data.subscription;
+
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) console.error('Session error:', error);
+      setUser(session?.user ?? null);
+      if (!hasCode) {
+        setIsLoading(false);
+      }
+    };
+
     const handlePopState = () => {
       const path = window.location.pathname.substring(1);
       setCurrentPage((path === '' || path === 'remove-audio') ? '' : path);
     };
     window.addEventListener('popstate', handlePopState);
 
-    // If there is a code in the URL, we know an auth exchange is happening
     const hasCode = window.location.search.includes('code=');
     if (hasCode) {
-      console.log('Auth code detected in URL, waiting for exchange...');
       setIsLoading(true);
     }
 
-    const subscription = supabase
-      ? supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
-          console.log('Auth Event:', event, 'User:', session?.user?.email);
-          setUser(session?.user ?? null);
-          
-          // Only stop loading if we have resolved the initial state or a code was exchanged
-          if (event !== 'INITIAL_SESSION' || !hasCode) {
-            setIsLoading(false);
-          }
-          
-          if (event === 'SIGNED_IN' || (event === 'INITIAL_SESSION' && session)) {
-            const path = window.location.pathname.substring(1);
-            if (path === 'login' || path === 'signup' || (path === '' && hasCode)) {
-              console.log('Redirecting to dashboard...');
-              handleNavigate('dashboard');
-            }
-          }
-        }).data.subscription
-      : null;
-
-    if (supabase) {
-      supabase.auth.getSession().then(({ data: { session }, error }) => {
-        if (error) console.error('Session error:', error);
-        console.log('Initial Session Fetch:', session?.user?.email);
-        setUser(session?.user ?? null);
-        if (!hasCode) {
-          setIsLoading(false);
-        }
-      });
-    }
+    initAuth();
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
