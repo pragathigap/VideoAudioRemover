@@ -4,8 +4,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
 // Route-based code splitting
-const RemoveAudio = lazy(() => import('./pages/RemoveAudio'));
-const Home = lazy(() => import('./pages/Home'));
+import RemoveAudio from './pages/RemoveAudio';
+import Home from './pages/Home';
 const ExtractMP3 = lazy(() => import('./pages/ExtractMP3'));
 const VideoCompressor = lazy(() => import('./pages/VideoCompressor'));
 const VideoResizer = lazy(() => import('./pages/VideoResizer'));
