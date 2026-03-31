@@ -10,9 +10,10 @@ export default defineConfig({
   build: {
     modulePreload: {
       polyfill: true,
-      resolveDependencies: (_url, deps) => {
-        // Drastically reduce initial unused JS by filtering ALL vendor/heavy chunks from preload
-        return deps.filter(dep => !dep.includes('vendor-'));
+      resolveDependencies: () => {
+        // Ultimate Zero-Unused JS: Stop ALL module preloading from HTML.
+        // Chunks will only be fetched at runtime exactly when needed.
+        return [];
       },
     },
     rollupOptions: {
