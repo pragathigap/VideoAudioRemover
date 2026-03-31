@@ -53,7 +53,7 @@ import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   // Use lowercase for cleaner URLs
   const [currentPage, setCurrentPage] = useState(() => {
     const path = window.location.pathname.substring(1);
@@ -133,7 +133,9 @@ const App: React.FC = () => {
   }, [user, currentPage, handleNavigate]);
 
   const renderPage = () => {
-    if (isLoading) {
+    // Only block the UI for protected or auth-critical pages
+    const isAuthPage = currentPage === 'dashboard' || currentPage === 'login' || currentPage === 'signup';
+    if (isLoading && isAuthPage) {
       return (
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
