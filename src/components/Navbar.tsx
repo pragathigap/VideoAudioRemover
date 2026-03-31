@@ -16,9 +16,10 @@ interface NavbarProps {
   onNavigate: (page: string) => void;
   currentPage: string;
   user?: User | null;
+  onPrefetch?: (page: string) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
+const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user, onPrefetch }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
 
@@ -27,6 +28,10 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
     if (currentPage === '') return 'remove-audio';
     return currentPage;
   }, [currentPage]);
+
+  const prefetch = (page: string) => {
+    if (onPrefetch) onPrefetch(page);
+  };
 
   const navigate = (page: string) => {
     onNavigate(page);
@@ -43,6 +48,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           id="nav-logo"
           className="flex items-center gap-3 cursor-pointer min-w-0"
           onClick={() => navigate('')}
+          onMouseEnter={() => prefetch('')}
+          onTouchStart={() => prefetch('')}
           role="link"
           tabIndex={0}
           aria-label="Home - Remove Audio from Video"
@@ -58,6 +65,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           <button
             type="button"
             onClick={() => navigate('pricing')}
+            onMouseEnter={() => prefetch('pricing')}
+            onTouchStart={() => prefetch('pricing')}
             className={navItemClass(active === 'pricing')}
           >
             <span>Pricing</span>
@@ -65,6 +74,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           <button
             type="button"
             onClick={() => navigate('')}
+            onMouseEnter={() => prefetch('')}
+            onTouchStart={() => prefetch('')}
             className={navItemClass(active === 'remove-audio')}
           >
             <span>Remove Audio</span>
@@ -72,6 +83,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           <button
             type="button"
             onClick={() => navigate('add-audio')}
+            onMouseEnter={() => prefetch('add-audio')}
+            onTouchStart={() => prefetch('add-audio')}
             className={navItemClass(active === 'add-audio')}
           >
             <span>Add Audio</span>
@@ -79,6 +92,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           <button
             type="button"
             onClick={() => navigate('extract-audio')}
+            onMouseEnter={() => prefetch('extract-audio')}
+            onTouchStart={() => prefetch('extract-audio')}
             className={navItemClass(active === 'extract-audio')}
           >
             <span>Extract Audio</span>
@@ -86,6 +101,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           <button
             type="button"
             onClick={() => navigate('compress-video')}
+            onMouseEnter={() => prefetch('compress-video')}
+            onTouchStart={() => prefetch('compress-video')}
             className={navItemClass(active === 'compress-video')}
           >
             <span>Compress Video</span>
@@ -93,6 +110,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
           <button
             type="button"
             onClick={() => navigate('resizer')}
+            onMouseEnter={() => prefetch('resizer')}
+            onTouchStart={() => prefetch('resizer')}
             className={navItemClass(active === 'resizer')}
           >
             <span>Resizer</span>
@@ -106,6 +125,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
               type="button"
               className="btn-primary py-2 px-6"
               onClick={() => navigate('dashboard')}
+              onMouseEnter={() => prefetch('dashboard')}
+              onTouchStart={() => prefetch('dashboard')}
             >
               Dashboard
             </button>
@@ -116,6 +137,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
                 type="button"
                 className="btn-secondary py-2 px-6"
                 onClick={() => navigate('login')}
+                onMouseEnter={() => prefetch('login')}
+                onTouchStart={() => prefetch('login')}
               >
                 Log In
               </button>
@@ -124,6 +147,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
                 type="button"
                 className="btn-primary py-2 px-6"
                 onClick={() => navigate('signup')}
+                onMouseEnter={() => prefetch('signup')}
+                onTouchStart={() => prefetch('signup')}
               >
                 Sign Up
               </button>
@@ -146,19 +171,19 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
 
       {isMobileMenuOpen && (
         <div className="mobile-menu-overlay lg:hidden">
-          <button onClick={() => navigate('pricing')} className={`${navItemClass(active === 'pricing')} w-full justify-start py-3 px-4`}>Pricing</button>
-          <button onClick={() => navigate('')} className={`${navItemClass(active === 'remove-audio')} w-full justify-start py-3 px-4`}>Remove Audio</button>
-          <button onClick={() => navigate('add-audio')} className={`${navItemClass(active === 'add-audio')} w-full justify-start py-3 px-4`}>Add Audio</button>
-          <button onClick={() => navigate('extract-audio')} className={`${navItemClass(active === 'extract-audio')} w-full justify-start py-3 px-4`}>Extract Audio</button>
-          <button onClick={() => navigate('compress-video')} className={`${navItemClass(active === 'compress-video')} w-full justify-start py-3 px-4`}>Compress Video</button>
-          <button onClick={() => navigate('resizer')} className={`${navItemClass(active === 'resizer')} w-full justify-start py-3 px-4`}>Resizer</button>
+          <button onClick={() => navigate('pricing')} onMouseEnter={() => prefetch('pricing')} className={`${navItemClass(active === 'pricing')} w-full justify-start py-3 px-4`}>Pricing</button>
+          <button onClick={() => navigate('')} onMouseEnter={() => prefetch('')} className={`${navItemClass(active === 'remove-audio')} w-full justify-start py-3 px-4`}>Remove Audio</button>
+          <button onClick={() => navigate('add-audio')} onMouseEnter={() => prefetch('add-audio')} className={`${navItemClass(active === 'add-audio')} w-full justify-start py-3 px-4`}>Add Audio</button>
+          <button onClick={() => navigate('extract-audio')} onMouseEnter={() => prefetch('extract-audio')} className={`${navItemClass(active === 'extract-audio')} w-full justify-start py-3 px-4`}>Extract Audio</button>
+          <button onClick={() => navigate('compress-video')} onMouseEnter={() => prefetch('compress-video')} className={`${navItemClass(active === 'compress-video')} w-full justify-start py-3 px-4`}>Compress Video</button>
+          <button onClick={() => navigate('resizer')} onMouseEnter={() => prefetch('resizer')} className={`${navItemClass(active === 'resizer')} w-full justify-start py-3 px-4`}>Resizer</button>
           <div className="h-[1px] bg-white/10 my-2" />
           {user ? (
-            <button onClick={() => navigate('dashboard')} className="btn-primary w-full justify-center py-3">Dashboard</button>
+            <button onClick={() => navigate('dashboard')} onMouseEnter={() => prefetch('dashboard')} className="btn-primary w-full justify-center py-3">Dashboard</button>
           ) : (
             <div className="flex flex-col gap-2">
-              <button onClick={() => navigate('login')} className="btn-secondary w-full justify-center py-3">Log In</button>
-              <button onClick={() => navigate('signup')} className="btn-primary w-full justify-center py-3">Sign Up</button>
+              <button onClick={() => navigate('login')} onMouseEnter={() => prefetch('login')} className="btn-secondary w-full justify-center py-3">Log In</button>
+              <button onClick={() => navigate('signup')} onMouseEnter={() => prefetch('signup')} className="btn-primary w-full justify-center py-3">Sign Up</button>
             </div>
           )}
         </div>

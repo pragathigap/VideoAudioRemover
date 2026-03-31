@@ -211,6 +211,11 @@
         s.async = true;
         s.defer = true;
         document.body.appendChild(s);
+
+        // Service Worker Registration for <0.2s load times
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js');
+        }
       }, 3000);
     });
   </script>

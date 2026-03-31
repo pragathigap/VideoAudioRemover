@@ -19,6 +19,30 @@ const Contact = lazy(() => import('./pages/Contact'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
 
+// Speculative prefetcher for sub-0.2s navigation
+const prefetchMap: Record<string, () => Promise<any>> = {
+  'home': () => import('./pages/Home'),
+  'tools': () => import('./pages/Home'),
+  'extract-audio': () => import('./pages/ExtractMP3'),
+  'compress-video': () => import('./pages/VideoCompressor'),
+  'resizer': () => import('./pages/VideoResizer'),
+  'add-audio': () => import('./pages/AddAudio'),
+  'pricing': () => import('./pages/Pricing'),
+  'login': () => import('./pages/Login.tsx'),
+  'signup': () => import('./pages/Signup.tsx'),
+  'dashboard': () => import('./pages/Dashboard'),
+  'contact': () => import('./pages/Contact'),
+  'privacy': () => import('./pages/Privacy'),
+  'terms': () => import('./pages/Terms'),
+  'info:about': () => import('./pages/Info.tsx'),
+  'info:faq': () => import('./pages/Info.tsx'),
+};
+
+export const prefetchPage = (page: string) => {
+  const loader = prefetchMap[page] || prefetchMap[page.split(':')[0]];
+  if (loader) loader();
+};
+
 // Deferred Supabase import
 const getSupabase = async () => {
   const { supabase } = await import('./lib/supabase');
@@ -166,7 +190,7 @@ const App: React.FC = () => {
   return (
     <LazyMotion features={domAnimation}>
       <div className="min-h-screen flex flex-col">
-        <Navbar onNavigate={handleNavigate} currentPage={currentPage} user={user} />
+        <Navbar onNavigate={handleNavigate} currentPage={currentPage} user={user} onPrefetch={prefetchPage} />
         
         <div className="flex-1">
           {renderPage()}
