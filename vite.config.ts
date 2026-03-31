@@ -13,26 +13,52 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-utils': ['framer-motion', 'lucide-react', 'canvas-confetti'],
-          'vendor-supabase': ['@supabase/supabase-js'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react';
+            }
+            if (id.includes('@supabase')) {
+              return 'vendor-supabase';
+            }
+            if (id.includes('framer-motion')) {
+              return 'vendor-framer';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
+            if (id.includes('canvas-confetti')) {
+              return 'vendor-effects';
+            }
+            return 'vendor'; // all other node_modules
+          }
         },
       },
-      treeshake: true,
+      treeshake: {
+        moduleSideEffects: false,
+        propertyReadSideEffects: false,
+        tryCatchDeoptimization: false
+      },
     },
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info'],
+        passes: 3,
+      },
+      mangle: {
+        toplevel: true,
       },
       format: {
         comments: false,
       },
     },
-    cssMinify: true,
-    chunkSizeWarningLimit: 1000,
+    cssMinify: 'lightningcss',
+    cssCodeSplit: true,
+    assetsInlineLimit: 4096,
+    chunkSizeWarningLimit: 600,
   },
   server: {
     headers: {

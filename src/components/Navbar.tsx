@@ -30,11 +30,16 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
     <nav ref={navRef} className="navbar glass-effect sticky top-0 z-50 px-6 flex items-center mb-8">
       <div className="flex-1 flex items-center justify-between w-full h-full relative">
         <div
+          id="nav-logo"
           className="flex items-center gap-3 cursor-pointer min-w-0"
           onClick={() => navigate('')}
+          role="link"
+          tabIndex={0}
+          aria-label="Home - Remove Audio from Video"
+          onKeyDown={(e) => e.key === 'Enter' && navigate('')}
         >
           <div className="brand-badge w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
-            <VideoIcon className="text-white" size={24} />
+            <VideoIcon className="text-white" size={24} aria-hidden="true" />
           </div>
           <span className="text-xl font-bold gradient-text truncate">Remove Audio from Video</span>
         </div>
@@ -87,6 +92,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
         <div className="hidden lg:flex justify-end gap-3">
           {user ? (
             <button
+              id="nav-dashboard"
               type="button"
               className="btn-primary py-2 px-6"
               onClick={() => navigate('dashboard')}
@@ -95,10 +101,20 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
             </button>
           ) : (
             <>
-              <button type="button" className="btn-secondary py-2 px-6" onClick={() => navigate('login')}>
+              <button
+                id="nav-login"
+                type="button"
+                className="btn-secondary py-2 px-6"
+                onClick={() => navigate('login')}
+              >
                 Log In
               </button>
-              <button type="button" className="btn-primary py-2 px-6" onClick={() => navigate('signup')}>
+              <button
+                id="nav-signup"
+                type="button"
+                className="btn-primary py-2 px-6"
+                onClick={() => navigate('signup')}
+              >
                 Sign Up
               </button>
             </>
@@ -107,8 +123,11 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage, user }) => {
 
         <div className="lg:hidden flex items-center">
           <button
+            id="mobile-menu-toggle"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="text-white p-2"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>

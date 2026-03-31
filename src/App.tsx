@@ -1,4 +1,5 @@
 import React, { useCallback, useState, Suspense, lazy } from 'react';
+import { LazyMotion, domAnimation } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -152,15 +153,17 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar onNavigate={handleNavigate} currentPage={currentPage} user={user} />
-      
-      <div className="flex-1">
-        {renderPage()}
-      </div>
+    <LazyMotion features={domAnimation}>
+      <div className="min-h-screen flex flex-col">
+        <Navbar onNavigate={handleNavigate} currentPage={currentPage} user={user} />
+        
+        <div className="flex-1">
+          {renderPage()}
+        </div>
 
-      <Footer onNavigate={handleNavigate} />
-    </div>
+        <Footer onNavigate={handleNavigate} />
+      </div>
+    </LazyMotion>
   );
 };
 

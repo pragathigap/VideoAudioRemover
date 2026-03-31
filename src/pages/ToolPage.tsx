@@ -488,10 +488,16 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
 
       <section className="glass-effect rounded-3xl p-8 mb-8">
         <div
+          id="dropzone"
           onClick={() => fileInputRef.current?.click()}
+          onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
           className="border-2 border-dashed border-glass-border rounded-2xl p-12 text-center cursor-pointer hover:border-primary transition-all group"
+          role="button"
+          tabIndex={0}
+          aria-label="Upload video files"
         >
           <input
+            id="file-upload-input"
             type="file"
             multiple
             accept="video/*"
@@ -500,7 +506,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
             onChange={handleFileSelect}
           />
           <div className="w-16 h-16 bg-bg-dark-alt rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-            <Upload className="text-primary" size={32} />
+            <Upload className="text-primary" size={32} aria-hidden="true" />
           </div>
           <h3 className="text-xl font-semibold mb-2">Select Videos</h3>
           <p className="text-text-muted">Drag & drop MP4 files here {!isPremium && '(Max 50MB)'}</p>
@@ -530,12 +536,14 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                       </select>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-sm">CRF: {compressionCrf}</span>
+                      <label htmlFor="crf-range" className="text-sm">CRF: {compressionCrf}</label>
                       <input
+                        id="crf-range"
                         type="range" min="18" max="51" step="1"
                         value={compressionCrf}
                         onChange={(e) => setCompressionCrf(parseInt(e.target.value))}
                         className="accent-primary"
+                        aria-label="Compression quality CRF value"
                       />
                     </div>
                   </div>
@@ -617,7 +625,10 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                       </p>
                     </div>
                     {file.status !== 'idle' && (
-                      <span className={`status-badge shrink-0 mt-1 ${file.status === 'done' ? 'status-done' : 'status-processing'}`}>
+                      <span
+                        className={`status-badge shrink-0 mt-1 ${file.status === 'done' ? 'status-done' : 'status-processing'}`}
+                        role="status"
+                      >
                         {file.status.toUpperCase()}
                       </span>
                     )}
@@ -634,11 +645,13 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
                       <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 w-full">
                         {(mode === 'all' || mode === 'mute') && (
                           <button
+                            id={`btn-mute-${file.id}`}
                             onClick={(e) => handleMuteVideo(file, e.currentTarget)}
                             disabled={file.status === 'processing'}
                             className="btn-primary w-full justify-center py-4 text-lg"
+                            aria-label="Remove audio from this video"
                           >
-                            <VolumeX size={20} /> Remove Audio
+                            <VolumeX size={20} aria-hidden="true" /> Remove Audio
                           </button>
                         )}
                         {(mode === 'all' || mode === 'extract') && (

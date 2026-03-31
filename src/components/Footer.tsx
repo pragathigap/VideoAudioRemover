@@ -15,10 +15,18 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   return (
     <footer className="footer">
       <div className="footer-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div className="cursor-pointer" onClick={() => navigate('')}>
+        <div
+          id="footer-logo"
+          className="cursor-pointer"
+          onClick={() => navigate('')}
+          role="link"
+          tabIndex={0}
+          aria-label="Home - Remove Audio from Video"
+          onKeyDown={(e) => e.key === 'Enter' && navigate('')}
+        >
           <div className="flex items-center gap-2 mb-6">
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-cyan-400 rounded-lg flex items-center justify-center">
-              <VideoIcon className="text-white" size={18} />
+              <VideoIcon className="text-white" size={18} aria-hidden="true" />
             </div>
             <span className="text-lg font-bold gradient-text">Remove Audio from Video</span>
           </div>
@@ -28,11 +36,11 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         </div>
         <div>
           <h5 className="footer-title">Tools</h5>
-          <button onClick={() => navigate('')} className="footer-link-btn">Remove Audio</button>
-          <button onClick={() => navigate('extract-audio')} className="footer-link-btn">Extract Audio</button>
-          <button onClick={() => navigate('compress-video')} className="footer-link-btn">Compress Video</button>
-          <button onClick={() => navigate('add-audio')} className="footer-link-btn">Add Audio</button>
-          <button onClick={() => navigate('resizer')} className="footer-link-btn">Resize Video</button>
+          <button id="footer-tool-remove" onClick={() => navigate('')} className="footer-link-btn">Remove Audio</button>
+          <button id="footer-tool-extract" onClick={() => navigate('extract-audio')} className="footer-link-btn">Extract Audio</button>
+          <button id="footer-tool-compress" onClick={() => navigate('compress-video')} className="footer-link-btn">Compress Video</button>
+          <button id="footer-tool-add" onClick={() => navigate('add-audio')} className="footer-link-btn">Add Audio</button>
+          <button id="footer-tool-resize" onClick={() => navigate('resizer')} className="footer-link-btn">Resize Video</button>
         </div>
         <div>
           <h5 className="footer-title">Support</h5>

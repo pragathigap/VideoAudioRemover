@@ -30,8 +30,10 @@
 
   <link rel="preconnect" href="https://www.clarity.ms" crossorigin>
   <link rel="preconnect" href="https://o.clarity.ms" crossorigin="use-credentials">
+  <link rel="preconnect" href="https://vjylppvve.clarity.ms" crossorigin>
   <link rel="dns-prefetch" href="https://www.clarity.ms">
   <link rel="dns-prefetch" href="https://analytics.ahrefs.com">
+  <link rel="dns-prefetch" href="https://db-pfx.supabase.co">
   
   <!-- Preload Critical Local Font -->
   <link rel="preload" href="/fonts/outfit-v15-latin-600.woff2" as="font" type="font/woff2" crossorigin>
@@ -117,6 +119,10 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(15, 23, 42, 0.15);
+    }
+    .content-auto {
+      content-visibility: auto;
+      contain-intrinsic-size: 0 500px;
     }
     @media (max-width: 768px) {
       .navbar { height: 64px; padding: 0 1rem; }
