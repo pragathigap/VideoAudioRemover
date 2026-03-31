@@ -80,7 +80,7 @@ if (!isBot) {
   });
 
   // Fallback for real users who might stay idle
-  setTimeout(hydrate, 8000);
+  setTimeout(hydrate, 1500);
 }
 // For bots, we NEVER hydrate automatically, keeping the page a pure HTML/CSS shell
 // This ensures that PageSpeed Insights sees 0.0KB of unused JavaScript.
