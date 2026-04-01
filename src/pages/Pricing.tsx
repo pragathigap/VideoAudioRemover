@@ -86,7 +86,7 @@ const PricingCard = ({ title, price, period, features, buttonText, onClick, load
       <ul className="pricing-features">
         {features.map((feature) => (
           <li key={feature} className="pricing-feature">
-            <span className={`pricing-feature-icon ${recommended ? 'pricing-feature-icon--recommended' : ''}`}>
+            <span className="pricing-feature-icon">
               <Check size={13} strokeWidth={3.5} className="text-white" />
             </span>
             <span className="pricing-feature-text">{feature}</span>

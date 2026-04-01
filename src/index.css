@@ -1157,14 +1157,9 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.05);
-  border: 1px solid rgba(15, 23, 42, 0.10);
+  background: rgba(99, 102, 241, 0.95);
+  border: 1px solid rgba(99, 102, 241, 1);
   flex: 0 0 auto;
-}
-
-.pricing-feature-icon--recommended {
-  background: rgba(99, 102, 241, 0.42);
-  border-color: rgba(99, 102, 241, 0.50);
 }
 
 .pricing-feature-text {
