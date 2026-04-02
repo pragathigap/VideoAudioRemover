@@ -462,7 +462,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description }) => {
     <main className="max-w-4xl mx-auto px-6">
       <header className="text-center mb-12">
         <h1
-          className="text-4xl md:text-5xl font-bold mb-4"
+          className="text-5xl md:text-6xl font-bold mb-4"
           dangerouslySetInnerHTML={{ __html: title }}
         />
         <p className="text-muted text-lg">{description}</p>
