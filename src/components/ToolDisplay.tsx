@@ -122,7 +122,7 @@ const ToolDisplay: React.FC<ToolDisplayProps> = ({ mode }) => {
           <div className="feature-blob feature-blob-2" />
         </div>
 
-        <div className="text-center mb-16">
+        <div className="text-center mb-24">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
