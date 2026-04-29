@@ -123,6 +123,15 @@
       .md\:text-5xl { font-size: 3rem; }
     }
   </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFYPLLXHX1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-NFYPLLXHX1');
+  </script>
 </head>
 
 <body>
@@ -181,16 +190,6 @@
         s.defer = true;
         s.crossOrigin = "anonymous";
         document.body.appendChild(s);
-
-        // Google Analytics 4 Placeholder
-        var ga = document.createElement('script');
-        ga.src = "https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX";
-        ga.async = true;
-        document.head.appendChild(ga);
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX');
 
         // Service Worker Registration for <0.2s load times
         if ('serviceWorker' in navigator) {
