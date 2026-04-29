@@ -182,6 +182,16 @@
         s.crossOrigin = "anonymous";
         document.body.appendChild(s);
 
+        // Google Analytics 4 Placeholder
+        var ga = document.createElement('script');
+        ga.src = "https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX";
+        ga.async = true;
+        document.head.appendChild(ga);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+
         // Service Worker Registration for <0.2s load times
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.register('/sw.js');
