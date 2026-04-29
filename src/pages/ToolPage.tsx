@@ -66,7 +66,17 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description, primaryKe
         }
       }
     }
-  }, [title, description, primaryKeyword]);
+
+    // Dynamic Canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    const currentUrl = window.location.origin + (mode === 'all' ? '' : `/${mode === 'mute' ? 'remove-audio' : mode}`);
+    canonical.setAttribute('href', currentUrl);
+  }, [title, description, primaryKeyword, mode]);
 
   // Settings for new tools
   const [compressionCrf, setCompressionCrf] = useState(28); // 18-28 is good range
@@ -487,6 +497,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description, primaryKe
           className="text-5xl md:text-6xl font-bold mb-4"
           dangerouslySetInnerHTML={{ __html: title }}
         />
+        {primaryKeyword && <span className="hidden">{primaryKeyword}</span>}
         <p className="text-muted text-lg">{description}</p>
 
 

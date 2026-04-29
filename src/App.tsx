@@ -18,6 +18,7 @@ const AddAudio = lazy(() => import('./pages/AddAudio'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Speculative prefetcher for sub-0.2s navigation
 const prefetchMap: Record<string, () => Promise<any>> = {
@@ -182,7 +183,7 @@ const App: React.FC = () => {
             case 'terms':
               return <Terms />;
             default:
-              return <Home />;
+              return <NotFound onNavigate={handleNavigate} />;
           }
         })()}
       </Suspense>
