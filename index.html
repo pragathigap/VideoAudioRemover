@@ -10,8 +10,8 @@
   <!-- Preload Critical Local Asset -->
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <!-- Preload Critical Local Font -->
-  <link rel="preload" href="/fonts/outfit-v15-latin-700.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/outfit-v15-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/outfit-v15-latin-700.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
+  <link rel="preload" href="/fonts/outfit-v15-latin-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
 
   <!-- Non-blocking preconnects -->
   <link rel="preconnect" href="https://www.clarity.ms">
@@ -123,15 +123,6 @@
       .md\:text-5xl { font-size: 3rem; }
     }
   </style>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFYPLLXHX1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-NFYPLLXHX1');
-  </script>
 </head>
 
 <body>
@@ -190,6 +181,16 @@
         s.defer = true;
         s.crossOrigin = "anonymous";
         document.body.appendChild(s);
+
+        // Google Analytics
+        var ga = document.createElement('script');
+        ga.src = "https://www.googletagmanager.com/gtag/js?id=G-NFYPLLXHX1";
+        ga.async = true;
+        document.head.appendChild(ga);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-NFYPLLXHX1');
 
         // Service Worker Registration for <0.2s load times
         if ('serviceWorker' in navigator) {
