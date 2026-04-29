@@ -150,7 +150,6 @@ const ToolDisplay: React.FC<ToolDisplayProps> = ({ mode }) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.15, type: 'spring', stiffness: 100 }}
-              whileHover={{ y: -8 }}
               className="feature-card"
             >
               <div 

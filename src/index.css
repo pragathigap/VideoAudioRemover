@@ -1512,7 +1512,6 @@ h1 .gradient-text,
 }
 
 .feature-card:hover {
-  transform: translateY(-10px);
   background: rgba(255, 255, 255, 0.8);
   border-color: var(--primary-light);
   box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.15);
