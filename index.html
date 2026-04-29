@@ -3,7 +3,6 @@
 
 <head>
   <meta charset="UTF-8" />
-  <style>:root{--primary:#6366f1;--accent:#22d3ee;--bg-dark:#ffffff;--text-main:#0f172a;--text-muted:#475569;--glass:rgba(255,255,255,0.72);--glass-border:rgba(15,23,42,0.10)}body{margin:0;background-color:var(--bg-dark);font-family:system-ui,-apple-system,sans-serif;color:var(--text-main);line-height:1.6;overflow-x:hidden}.navbar{background:rgba(3,10,80,0.98);height:80px;display:flex;align-items:center;padding:0 1.5rem;border-bottom:1px solid rgba(255,255,255,0.15);position:sticky;top:0;z-index:50}.brand-badge{background:linear-gradient(135deg,#6366f1 0%,#22d3ee 100%);width:40px;height:40px;border-radius:0.75rem;flex-shrink:0;display:flex;align-items:center;justify-content:center}.gradient-text{background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;font-size:1.25rem}.main-container{padding:4rem 1.5rem;max-width:1200px;margin:0 auto;text-align:center}h1{font-size:3.5rem;font-weight:800;margin-bottom:1.5rem}</style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Remove Audio From Video & Audio Remover | Fast Video Compressor</title>
   
@@ -27,7 +26,7 @@
   <link rel="manifest" href="/manifest.json" />
   <meta name="google-site-verification" content="pQ5ujxubVFowkn3v_s8rwY5thQuYsoo27OBhu2wJVFw" />
 
-  <!-- Critical Inline CSS -->
+  <!-- Critical Inline CSS (Consolidated) -->
   <style>
     @font-face {
       font-family: 'Outfit';
@@ -58,6 +57,7 @@
       font-family: 'Outfit', system-ui, -apple-system, sans-serif;
       color: var(--text-main);
       line-height: 1.6;
+      overflow-x: hidden;
     }
     .navbar {
       background: rgba(3, 10, 80, 0.98);
@@ -86,6 +86,7 @@
       background-clip: text;
       -webkit-text-fill-color: transparent;
       font-weight: 700;
+      font-size: 1.25rem;
     }
     .text-xl { font-size: 1.25rem; }
     .text-4xl { font-size: 2.25rem; }
@@ -93,7 +94,7 @@
     .font-bold { font-weight: 700; }
     .text-center { text-align: center; }
     .text-muted { color: var(--text-muted); }
-    .max-w-4xl { max-width: 56rem; }
+    .max-w-4xl { max-width: 1200px; margin: 0 auto; }
     .mx-auto { margin-left: auto; margin-right: auto; }
     .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
     .mb-4 { margin-bottom: 1rem; }
@@ -110,17 +111,13 @@
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(15, 23, 42, 0.15);
     }
-    .content-auto {
-      content-visibility: auto;
-      contain-intrinsic-size: 0 500px;
-    }
     @media (max-width: 768px) {
       .navbar { height: 64px; padding: 0 1rem; }
       .text-4xl { font-size: 1.75rem; }
       .text-xl { font-size: 1rem; }
     }
     @media (min-width: 768px) {
-      .md\:text-5xl { font-size: 3rem; }
+      .md\:text-5xl { font-size: 3.5rem; }
     }
   </style>
 </head>
@@ -141,7 +138,7 @@
           <span class="text-xl font-bold" style="color: white;">Remove Audio from Video</span>
         </div>
       </nav>
-      <main class="max-w-4xl mx-auto px-6 content-auto" style="margin-top: 3rem; text-align: center; width: 100%;">
+      <main class="max-w-4xl mx-auto px-6" style="margin-top: 3rem; text-align: center; width: 100%;">
         <h1 class="text-4xl md:text-5xl font-bold mb-4">Remove <span class="gradient-text">Audio from Video</span></h1>
         <p class="text-muted text-lg">Fast, browser-based tool to mute your videos. No uploads required.</p>
         <div class="glass-effect" style="min-height: 380px; border-radius: 1.5rem; margin-top: 3rem; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;">
