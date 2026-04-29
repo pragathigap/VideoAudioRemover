@@ -59,8 +59,9 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <a href="/terms-of-service.html" onClick={(e) => { e.preventDefault(); navigate('terms'); }} className="footer-link-btn text-left">Terms of Service</a>
         </div>
       </div>
-      <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-glass-border text-center text-xs text-text-muted">
-        © {new Date().getFullYear()} Remove Audio from Video. All rights reserved.
+      <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-glass-border text-center text-xs text-text-muted flex flex-col items-center gap-1">
+        <span>© {new Date().getFullYear()} Remove Audio from Video. All rights reserved.</span>
+        <span>powered By Golden Advertising & Publicity</span>
       </div>
     </footer>
   );
