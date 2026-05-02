@@ -5,20 +5,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Remove Audio From Video & Audio Remover | Fast Video Compressor</title>
-  
+
   <!-- Preload Critical Local Asset -->
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <!-- Preload Critical Local Font -->
-  <link rel="preload" href="/fonts/outfit-v15-latin-700.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
-  <link rel="preload" href="/fonts/outfit-v15-latin-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
+  <link rel="preload" href="/fonts/outfit-v15-latin-700.woff2" as="font" type="font/woff2" crossorigin
+    fetchpriority="high">
+  <link rel="preload" href="/fonts/outfit-v15-latin-600.woff2" as="font" type="font/woff2" crossorigin
+    fetchpriority="high">
 
   <!-- Non-blocking preconnects -->
   <link rel="preconnect" href="https://www.clarity.ms">
   <link rel="dns-prefetch" href="https://www.clarity.ms">
-  
+
   <!-- Deferred SEO Meta (Parser-Optimized) -->
   <meta name="description" content="The #1 Audio Remover. Mute videos instantly in your browser." />
-  <meta name="keywords" content="remove audio from video, mute video, video tools, video compressor, video compressor app, video remover, audio remover, mp4 compressor, resize video without losing quality, mute audio from video, fast video compressor, add audio in video, remove audio from mp4, compressor online mp4, video audio remover app, remove audio from video without losing quality, video resizer, sound remover" />
+  <meta name="keywords"
+    content="remove audio from video, mute video, video tools, video compressor, video compressor app, video remover, audio remover, mp4 compressor, resize video without losing quality, mute audio from video, fast video compressor, add audio in video, remove audio from mp4, compressor online mp4, video audio remover app, remove audio from video without losing quality, video resizer, sound remover" />
   <link rel="canonical" href="https://removeaudiofromvideo.com/" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Remove Audio From Video | Audio Remover" />
@@ -35,6 +38,7 @@
       font-style: normal;
       font-display: swap;
     }
+
     @font-face {
       font-family: 'Outfit';
       src: url('/fonts/outfit-v15-latin-700.woff2') format('woff2');
@@ -42,6 +46,7 @@
       font-style: normal;
       font-display: swap;
     }
+
     :root {
       --primary: #6366f1;
       --accent: #22d3ee;
@@ -51,6 +56,7 @@
       --glass: rgba(255, 255, 255, 0.72);
       --glass-border: rgba(15, 23, 42, 0.10);
     }
+
     body {
       margin: 0;
       background-color: var(--bg-dark);
@@ -59,6 +65,7 @@
       line-height: 1.6;
       overflow-x: hidden;
     }
+
     .navbar {
       background: rgba(3, 10, 80, 0.98);
       height: 80px;
@@ -70,6 +77,7 @@
       top: 0;
       z-index: 50;
     }
+
     .brand-badge {
       background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
       width: 40px;
@@ -80,6 +88,7 @@
       align-items: center;
       justify-content: center;
     }
+
     .gradient-text {
       background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
       -webkit-background-clip: text;
@@ -88,36 +97,104 @@
       font-weight: 700;
       font-size: 1.25rem;
     }
-    .text-xl { font-size: 1.25rem; }
-    .text-4xl { font-size: 2.25rem; }
-    .text-lg { font-size: 1.125rem; }
-    .font-bold { font-weight: 700; }
-    .text-center { text-align: center; }
-    .text-muted { color: var(--text-muted); }
-    .max-w-4xl { max-width: 1200px; margin: 0 auto; }
-    .mx-auto { margin-left: auto; margin-right: auto; }
-    .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-    .mb-4 { margin-bottom: 1rem; }
-    .mb-8 { margin-bottom: 2rem; }
-    .mb-12 { margin-bottom: 3rem; }
-    .flex { display: flex; }
-    .items-center { align-items: center; }
-    .justify-between { justify-content: space-between; }
-    .gap-3 { gap: 0.75rem; }
-    .flex-1 { flex: 1 1 0%; }
+
+    .text-xl {
+      font-size: 1.25rem;
+    }
+
+    .text-4xl {
+      font-size: 2.25rem;
+    }
+
+    .text-lg {
+      font-size: 1.125rem;
+    }
+
+    .font-bold {
+      font-weight: 700;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-muted {
+      color: var(--text-muted);
+    }
+
+    .max-w-4xl {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .mx-auto {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .px-6 {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+
+    .mb-4 {
+      margin-bottom: 1rem;
+    }
+
+    .mb-8 {
+      margin-bottom: 2rem;
+    }
+
+    .mb-12 {
+      margin-bottom: 3rem;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .justify-between {
+      justify-content: space-between;
+    }
+
+    .gap-3 {
+      gap: 0.75rem;
+    }
+
+    .flex-1 {
+      flex: 1 1 0%;
+    }
+
     .glass-effect {
       background: var(--glass);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(15, 23, 42, 0.15);
     }
+
     @media (max-width: 768px) {
-      .navbar { height: 64px; padding: 0 1rem; }
-      .text-4xl { font-size: 1.75rem; }
-      .text-xl { font-size: 1rem; }
+      .navbar {
+        height: 64px;
+        padding: 0 1rem;
+      }
+
+      .text-4xl {
+        font-size: 1.75rem;
+      }
+
+      .text-xl {
+        font-size: 1rem;
+      }
     }
+
     @media (min-width: 768px) {
-      .md\:text-5xl { font-size: 3.5rem; }
+      .md\:text-5xl {
+        font-size: 3.5rem;
+      }
     }
   </style>
 </head>
@@ -126,8 +203,10 @@
   <div id="root">
     <!-- Static Skeleton for Instant LCP/FCP -->
     <div style="min-height: 100vh; display: flex; flex-direction: column;">
-      <nav class="navbar" style="background: rgba(3, 10, 80, 0.98); height: 80px; display: flex; align-items: center; padding: 0 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.15); width: 100%;">
-        <div style="display: flex; align-items: center; gap: 0.75rem;" role="img" aria-label="Remove Audio from Video - Online Tool Logo">
+      <nav class="navbar"
+        style="background: rgba(3, 10, 80, 0.98); height: 80px; display: flex; align-items: center; padding: 0 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.15); width: 100%;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;" role="img"
+          aria-label="Remove Audio from Video - Online Tool Logo">
           <div class="brand-badge">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
               <rect width="20" height="20" x="2" y="2" rx="5" fill="white" fill-opacity="0.2" />
@@ -141,12 +220,22 @@
       <main class="max-w-4xl mx-auto px-6" style="margin-top: 3rem; text-align: center; width: 100%;">
         <h1 class="text-4xl md:text-5xl font-bold mb-4">Remove <span class="gradient-text">Audio from Video</span></h1>
         <p class="text-muted text-lg">Fast, browser-based tool to mute your videos. No uploads required.</p>
-        <div class="glass-effect" style="min-height: 380px; border-radius: 1.5rem; margin-top: 3rem; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;">
-          <div style="border: 2px dashed rgba(15,23,42,0.1); border-radius: 1.5rem; width: 100%; padding: 3rem; display: flex; flex-direction: column; align-items: center;">
-            <div style="width: 64px; height: 64px; background: rgba(15,23,42,0.05); border-radius: 1rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div class="glass-effect"
+          style="min-height: 380px; border-radius: 1.5rem; margin-top: 3rem; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;">
+          <div
+            style="border: 2px dashed rgba(15,23,42,0.1); border-radius: 1.5rem; width: 100%; padding: 3rem; display: flex; flex-direction: column; align-items: center;">
+            <div
+              style="width: 64px; height: 64px; background: rgba(15,23,42,0.05); border-radius: 1rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
             </div>
-            <div style="background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%); color: white; padding: 0.75rem 2rem; border-radius: 0.75rem; font-weight: 700; font-size: 1.25rem; margin-bottom: 0.5rem; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);">Select Videos</div>
+            <div
+              style="background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%); color: white; padding: 0.75rem 2rem; border-radius: 0.75rem; font-weight: 700; font-size: 1.25rem; margin-bottom: 0.5rem; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);">
+              Select Videos</div>
             <p style="color: #475569; margin: 0; font-size: 1rem;">Drag & drop MP4 or MOV files here (Max 50MB)</p>
           </div>
         </div>
@@ -154,44 +243,60 @@
     </div>
   </div>
   <style>
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
   <script type="module" src="/src/main.tsx"></script>
 
   <!-- Non-critical analytics moved to bottom with delay -->
   <script type="text/javascript">
-    window.addEventListener('load', function() {
-      setTimeout(function() {
+    window.addEventListener('load', function () {
+      setTimeout(function () {
         // Clarity
-        (function (c, l, a, r, i, t, y) {
-          c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-          t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
-          t.crossOrigin = "anonymous";
-          y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-        })(window, document, "clarity", "script", "vxjylppvve");
+        try {
+          (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+            t.crossOrigin = "anonymous";
+            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+          })(window, document, "clarity", "script", "vxjylppvve");
+        } catch (e) { console.warn('Clarity blocked'); }
 
         // Ahrefs
-        var s = document.createElement('script');
-        s.src = "https://analytics.ahrefs.com/analytics.js";
-        s.setAttribute('data-key', "2MsDFNVbqmVMKyvIj3Hshw");
-        s.async = true;
-        s.defer = true;
-        s.crossOrigin = "anonymous";
-        document.body.appendChild(s);
+        try {
+          var s = document.createElement('script');
+          s.src = "https://analytics.ahrefs.com/analytics.js";
+          s.setAttribute('data-key', "2MsDFNVbqmVMKyvIj3Hshw");
+          s.async = true;
+          s.defer = true;
+          s.crossOrigin = "anonymous";
+          document.body.appendChild(s);
+        } catch (e) { console.warn('Ahrefs blocked'); }
 
         // Google Analytics
-        var ga = document.createElement('script');
-        ga.src = "https://www.googletagmanager.com/gtag/js?id=G-NFYPLLXHX1";
-        ga.async = true;
-        document.head.appendChild(ga);
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-NFYPLLXHX1');
+        try {
+          var ga = document.createElement('script');
+          ga.src = "https://www.googletagmanager.com/gtag/js?id=G-NFYPLLXHX1";
+          ga.async = true;
+          document.head.appendChild(ga);
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', 'G-NFYPLLXHX1');
+        } catch (e) { console.warn('GA blocked'); }
 
-        // Service Worker Registration for <0.2s load times
+        // Service Worker Registration
         if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('/sw.js');
+          navigator.serviceWorker.register('/sw.js').catch(function (err) {
+            console.warn('SW registration failed:', err);
+          });
         }
       }, 3000);
     });
