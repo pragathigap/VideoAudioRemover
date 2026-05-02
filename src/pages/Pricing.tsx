@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, Check, CheckCircle2, Sparkles, X, Zap, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '../lib/supabase';
@@ -53,12 +52,8 @@ interface PricingCardProps {
 }
 
 const PricingCard = ({ title, price, period, features, buttonText, onClick, loading, badge, recommended, originalPrice }: PricingCardProps) => (
-  <motion.div
-    whileHover={{ y: -10, scale: 1.015 }}
-    initial={{ opacity: 0, y: 18 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-    className={`pricing-card ${recommended ? 'pricing-card--recommended' : ''}`}
+  <div
+    className={`pricing-card ${recommended ? 'pricing-card--recommended' : ''} animate-fadeIn`}
   >
     <div className="pricing-card-border" />
     <div className="pricing-card-body">
@@ -95,8 +90,7 @@ const PricingCard = ({ title, price, period, features, buttonText, onClick, load
       </ul>
 
       <div className="pricing-cta">
-        <motion.button
-          whileTap={{ scale: 0.98 }}
+        <button
           className={`pricing-btn ${recommended ? 'pricing-btn--recommended' : 'pricing-btn--standard'}`}
           onClick={onClick}
           disabled={loading}
@@ -105,7 +99,7 @@ const PricingCard = ({ title, price, period, features, buttonText, onClick, load
             {recommended ? <Zap size={14} fill="currentColor" /> : <ShieldCheck size={14} />}
             {loading ? 'Loading…' : buttonText}
           </span>
-        </motion.button>
+        </button>
 
         <div className="pricing-trust">
           <span className="pricing-trust-dot" />
@@ -114,7 +108,7 @@ const PricingCard = ({ title, price, period, features, buttonText, onClick, load
         </div>
       </div>
     </div>
-  </motion.div>
+  </div>
 );
 
 interface PricingProps {
@@ -395,23 +389,19 @@ const Pricing: React.FC<PricingProps> = ({ onNavigate }) => {
       <div className="pricing-bg" />
       <div className="pricing-wrap">
         <header className="pricing-header">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="pricing-pill-wrap"
+          <div
+            className="pricing-pill-wrap animate-fadeIn"
           >
             <span className="pricing-pill">
               Upgrade your workflow
             </span>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="pricing-title"
+          <h1
+            className="pricing-title animate-fadeIn"
           >
             Choose your <span className="gradient-text">plan</span>
-          </motion.h1>
+          </h1>
           <p className="pricing-subtitle">
             No ads, faster processing, and premium features for creators who ship.
           </p>
@@ -471,29 +461,21 @@ const Pricing: React.FC<PricingProps> = ({ onNavigate }) => {
           />
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="pricing-footer"
+        <div
+          className="pricing-footer animate-fadeIn"
         >
           <div className="pricing-footer-row">
             {['PRIVATE', 'STABLE', 'FAST', 'POWERFUL'].map((l) => (
               <span key={l} className="pricing-footer-chip">{l}</span>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      <AnimatePresence>
         {uiModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 350 }}
-              className="bg-white rounded-3xl p-10 max-w-md w-full shadow-[0_20px_50px_rgba(0,0,0,0.15)] relative overflow-hidden"
+            <div
+              className="bg-white rounded-3xl p-10 max-w-md w-full shadow-[0_20px_50px_rgba(0,0,0,0.15)] relative overflow-hidden animate-fadeIn"
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
               <button
@@ -505,16 +487,13 @@ const Pricing: React.FC<PricingProps> = ({ onNavigate }) => {
               </button>
 
               <div className="flex flex-col items-center text-center space-y-5">
-                <motion.div 
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.2, type: "spring", damping: 15 }}
-                  className="w-24 h-24 rounded-full flex items-center justify-center bg-gray-50 mb-2"
+                <div 
+                  className="w-24 h-24 rounded-full flex items-center justify-center bg-gray-50 mb-2 animate-fadeIn"
                 >
                   {uiModal.variant === 'success' && <CheckCircle2 size={64} className="text-emerald-500" />}
                   {uiModal.variant === 'error' && <AlertCircle size={64} className="text-red-500" />}
                   {uiModal.variant === 'info' && <ShieldCheck size={64} className="text-primary" />}
-                </motion.div>
+                </div>
 
                 <div className="space-y-3">
                   <h3 className="text-2xl md:text-3xl font-bold text-text-main tracking-tight">{uiModal.title}</h3>
@@ -541,10 +520,9 @@ const Pricing: React.FC<PricingProps> = ({ onNavigate }) => {
                   </button>
                 )}
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
-      </AnimatePresence>
     </div>
   );
 };

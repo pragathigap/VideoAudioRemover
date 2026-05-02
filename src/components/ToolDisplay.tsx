@@ -17,7 +17,6 @@ import {
   RefreshCw
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface ToolContent {
   title: string;
@@ -94,13 +93,9 @@ const ToolDisplay: React.FC<ToolDisplayProps> = ({ mode }) => {
           { title: 'Privacy First', description: 'Zero tracking. Zero uploads. Zero compromises on your privacy.', icon: ShieldCheck, theme: 'rgba(16, 185, 129, 0.1)', color: '#10b981' },
           { title: 'Pro Engine', description: 'Powered by industry-standard FFmpeg for pixel-perfect results.', icon: Settings, theme: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }
         ].map((feature, i) => (
-          <motion.div 
+          <div 
             key={i} 
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="feature-card flex flex-col items-center text-center"
+            className="feature-card flex flex-col items-center text-center animate-fadeIn"
           >
             <div 
               className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
@@ -110,7 +105,7 @@ const ToolDisplay: React.FC<ToolDisplayProps> = ({ mode }) => {
             </div>
             <h4 className="font-bold mb-2">{feature.title}</h4>
             <p className="text-sm text-text-muted">{feature.description}</p>
-          </motion.div>
+          </div>
         ))}
       </section>
 
@@ -123,34 +118,23 @@ const ToolDisplay: React.FC<ToolDisplayProps> = ({ mode }) => {
         </div>
 
         <div className="text-center mb-24">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold mb-6 tracking-tight"
+          <h2 
+            className="text-4xl md:text-5xl font-bold mb-6 tracking-tight animate-fadeIn"
           >
             {content.title}
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-text-muted text-lg max-w-2xl mx-auto"
+          </h2>
+          <p 
+            className="text-text-muted text-lg max-w-2xl mx-auto animate-fadeIn"
           >
             {content.subtitle}
-          </motion.p>
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
           {content.items.map((item, i) => (
-            <motion.div 
+            <div 
               key={i} 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15, type: 'spring', stiffness: 100 }}
-              className="feature-card"
+              className="feature-card animate-fadeIn"
             >
               <div 
                 className="feature-icon-wrapper"
@@ -165,17 +149,14 @@ const ToolDisplay: React.FC<ToolDisplayProps> = ({ mode }) => {
               <div className="feature-number">
                 {i + 1}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
 
       {/* CTA Section Card */}
-      <motion.section 
-        initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        className="cta-section"
+      <section 
+        className="cta-section animate-fadeIn"
       >
         <div className="relative z-10">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Process Your Videos?</h2>
@@ -191,7 +172,7 @@ const ToolDisplay: React.FC<ToolDisplayProps> = ({ mode }) => {
             </div>
           </div>
         </div>
-      </motion.section>
+      </section>
     </div>
   );
 };

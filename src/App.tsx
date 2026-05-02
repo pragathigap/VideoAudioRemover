@@ -1,5 +1,4 @@
 import React, { useCallback, useState, Suspense, lazy } from 'react';
-import { LazyMotion, domAnimation } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -80,7 +79,6 @@ const App: React.FC = () => {
       }
 
       const { data } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
-        console.log('Auth Event:', event, 'User:', session?.user?.email);
         setUser(session?.user ?? null);
         
         if (event !== 'INITIAL_SESSION' || !hasCode) {
@@ -191,18 +189,16 @@ const App: React.FC = () => {
   };
 
   return (
-    <LazyMotion features={domAnimation}>
-      <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col">
         <Navbar onNavigate={handleNavigate} currentPage={currentPage} user={user} onPrefetch={prefetchPage} />
         
-        <div className="flex-1">
+        <div key={currentPage} className="flex-1 page-transition">
           {renderPage()}
         </div>
 
         <Footer onNavigate={handleNavigate} />
       </div>
-    </LazyMotion>
-  );
+    );
 };
 
 export default App;

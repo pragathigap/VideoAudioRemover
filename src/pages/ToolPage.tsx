@@ -9,7 +9,6 @@ import {
   Crown, 
   Zap 
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 // confetti will be loaded dynamically
 import { muteVideo, extractAudio, compressVideo, resizeVideo, addAudioToVideo } from '../mediaProcessor';
 import { supabase } from '../lib/supabase';
@@ -504,10 +503,8 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description, primaryKe
       </header>
 
       {ffmpegError && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-2xl mb-8 flex justify-between items-center"
+        <div
+          className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-2xl mb-8 flex justify-between items-center animate-fadeIn"
         >
           <div className="flex items-center gap-2">
             <RefreshCw size={18} className="animate-spin" />
@@ -516,7 +513,7 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description, primaryKe
           <button onClick={() => setFfmpegError(null)}>
             <X size={18} />
           </button>
-        </motion.div>
+        </div>
       )}
 
       <section className="glass-effect rounded-3xl p-8 mb-8">
@@ -639,14 +636,11 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description, primaryKe
             )}
 
 
-            <AnimatePresence>
+            <div className="space-y-6">
               {mediaFiles.map(file => (
-                <motion.div
+                <div
                   key={file.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="action-card"
+                  className="action-card animate-fadeIn"
                 >
                   <div className="grid grid-cols-[1fr,auto] gap-4 mb-6 px-1 items-start w-full min-w-0">
                     <div className="min-w-0">
@@ -766,14 +760,12 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description, primaryKe
                       )}
 
                       {file.status === 'done' && (
-                        <motion.button
-                          initial={{ scale: 0.9, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
+                        <button
                           onClick={() => downloadProcessed(file)}
-                          className="btn-primary w-full justify-center py-4 bg-success hover:bg-emerald-600 border-none mt-2 text-lg shadow-lg shadow-emerald-100"
+                          className="btn-primary w-full justify-center py-4 bg-success hover:bg-emerald-600 border-none mt-2 text-lg shadow-lg shadow-emerald-100 animate-fadeIn"
                         >
                           <Download size={20} /> Download
-                        </motion.button>
+                        </button>
                       )}
 
                       <button
@@ -784,9 +776,9 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description, primaryKe
                       </button>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </AnimatePresence>
+            </div>
             <input
               type="file"
               accept="audio/*"
@@ -804,14 +796,10 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description, primaryKe
 
 
 
-      <AnimatePresence>
         {showLimitModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative"
+            <div
+              className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative animate-fadeIn"
             >
               <button
                 onClick={() => setShowLimitModal(false)}
@@ -860,10 +848,9 @@ const ToolPage: React.FC<ToolPageProps> = ({ mode, title, description, primaryKe
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
-      </AnimatePresence>
     </main>
   );
 };

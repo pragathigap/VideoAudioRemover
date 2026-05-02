@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, Mail, User, Loader2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -69,10 +68,8 @@ const Login: React.FC<LoginProps> = ({ onNavigate }) => {
 
   return (
     <main className="login-page-v2">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="login-card-v2"
+      <div
+        className="login-card-v2 animate-fadeIn"
       >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Log In</h1>
@@ -156,7 +153,7 @@ const Login: React.FC<LoginProps> = ({ onNavigate }) => {
         </div>
 
 
-      </motion.div>
+      </div>
     </main>
   );
 };

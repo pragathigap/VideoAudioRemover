@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { LogOut, Crown, Mail, ShieldCheck, User as UserIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
@@ -32,10 +31,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, user, isLoading }) =>
     return (
       <main className="dashboard-content min-h-screen py-12">
         <div className="max-w-6xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="glass-effect rounded-3xl p-6 md:p-12 border border-white/20 shadow-2xl relative overflow-hidden text-center"
+          <div
+            className="glass-effect rounded-3xl p-6 md:p-12 border border-white/20 shadow-2xl relative overflow-hidden text-center animate-fadeIn"
             style={{ background: 'rgba(255, 255, 255, 0.9)' }}
           >
             <h1 className="text-3xl font-bold mb-2 text-text-main">Auth not configured</h1>
@@ -47,7 +44,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, user, isLoading }) =>
             >
               Back to Tools
             </button>
-          </motion.div>
+          </div>
         </div>
       </main>
     );
@@ -59,10 +56,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, user, isLoading }) =>
   return (
     <main className="dashboard-content min-h-screen py-12">
       <div className="max-w-6xl mx-auto px-6">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass-effect rounded-3xl p-6 md:p-12 border border-white/20 shadow-2xl relative overflow-hidden"
+        <div 
+          className="glass-effect rounded-3xl p-6 md:p-12 border border-white/20 shadow-2xl relative overflow-hidden animate-fadeIn"
           style={{ background: 'rgba(255, 255, 255, 0.9)' }}
         >
           {/* Background Decorative Element */}
@@ -170,7 +165,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, user, isLoading }) =>
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </main>
   );
